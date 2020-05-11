@@ -14,6 +14,7 @@ $expiryDate = $_POST['card_expiry'];
 $nameOnCard = $_POST['card_holder_name'];
 $cardNo = $_POST['card_no'];
 $custom_1 = $_POST['custom_1'];
+$currentPoints = $_POST['custom_2'];
 $str_arr = explode (",", $custom_1);  
 
 $merchant_secret = "4pAuBRcs5Cg4Evedqw80eK48aUtYKw5I18X58xsHTXNa";
@@ -28,22 +29,137 @@ if (($local_md5sig === $md5sig) AND ($status_code == 2) ){
    mysqli_query($db,$sql2); 
    mysqli_query($db,$sql); 
 
+
+   //add points to customer if full payment
+$paymentType = $str_arr[6];
+if($paymentType == "full"){
+   $points = $charges * 0.07;
+   if($currentPoints != null || $currentPoints != 0){
+      $points = $points + $currentPoints;
+      $sqlPoint = "UPDATE customer SET points = '$points' WHERE customerNic = '$str_arr[5]'";
+      mysqli_query($db,$sqlPoint);
+   }else{
+      $sqlPoint = "UPDATE customer SET points = '$points' WHERE customerNic = '$str_arr[5]'";
+      mysqli_query($db,$sqlPoint);
+   }
+}
    //send email to customer
-    
-   sendemailtocustomer();
+    $customerEmail = $_SESSION['user_data']['customerEmail'];
+   sendemailtocustomer($customerEmail,$order_id);
 
    //send email to company email for notify about new booking
 
-   sendemailtocompany();
+   //   sendemailtoadmin();
    
    
 }
 
 
 
-function sendemailtocompany(){
+function sendemailtocustomer($email,$order_id){
 
+
+
+  
+
+$url = 'https://api.sendgrid.com/';
+$user = 'vidura1996';
+$pass = '20168268werty';
+
+$json_string = array(
+
+  'to' => array(
+    $email,
+  ),
+  'category' => 'Booking Success'
+);
+
+$id = 2121;
+
+$params = array(
+    'api_user'  => $user,
+    'api_key'   => $pass,
+    'x-smtpapi' => json_encode($json_string),
+    'to'        => $email,
+    'subject'   => 'Booking Success',
+    'html'      => '<p>Your booking is success.</p><br><p>Booking id : '.$order_id.'</p><br><br><p>Thank you!</p>'
+                    ,
+    'from'      => "noreply@uvacabs.company",
+  );
+
+
+$request =  $url.'api/mail.send.json';
+
+// Generate curl request
+$session = curl_init($request);
+// Tell curl to use HTTP POST
+curl_setopt ($session, CURLOPT_POST, true);
+// Tell curl that this is the body of the POST
+curl_setopt ($session, CURLOPT_POSTFIELDS, $params);
+// Tell curl not to return headers, but do return the response
+curl_setopt($session, CURLOPT_HEADER, false);
+// Tell PHP not to use SSLv3 (instead opting for TLS)
+curl_setopt($session, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
+curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+
+// obtain response
+$response = curl_exec($session);
+curl_close($session);
+
+// print everything out
+print_r($response);
 
 }
 
+
+function sendemailtoadmin($order_id){
+   $url = 'https://api.sendgrid.com/';
+$user = 'vidura1996';
+$pass = '20168268werty';
+
+$json_string = array(
+
+  'to' => array(
+    'uvacabs0@gmail.com',
+  ),
+  'category' => 'New Booking'
+);
+
+$id = 2121;
+
+$params = array(
+    'api_user'  => $user,
+    'api_key'   => $pass,
+    'x-smtpapi' => json_encode($json_string),
+    'to'        => 'uvacabs0@gmail.com',
+    'subject'   => 'Booking Success',
+    'html'      => '<p>There is a new booking. Please respond. </p><br><p>Booking id : '.$order_id.'</p>'
+                    ,
+    'from'      => "noreply@uvacabs.company",
+  );
+
+
+$request =  $url.'api/mail.send.json';
+
+// Generate curl request
+$session = curl_init($request);
+// Tell curl to use HTTP POST
+curl_setopt ($session, CURLOPT_POST, true);
+// Tell curl that this is the body of the POST
+curl_setopt ($session, CURLOPT_POSTFIELDS, $params);
+// Tell curl not to return headers, but do return the response
+curl_setopt($session, CURLOPT_HEADER, false);
+// Tell PHP not to use SSLv3 (instead opting for TLS)
+curl_setopt($session, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
+curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
+
+// obtain response
+$response = curl_exec($session);
+curl_close($session);
+
+// print everything out
+print_r($response);
+
+}
+}
 ?>
