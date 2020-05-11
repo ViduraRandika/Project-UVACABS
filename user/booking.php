@@ -39,6 +39,11 @@ $date1 = "";
     }
 }
 
+$pointsBalance = 0;
+if(isset($_POST['pointsBalance'])){
+    $pointsBalance = $_POST['pointsBalance'];
+}
+
 
 $vehicle = "";
 if (isset($_POST['vehicle'])) {
@@ -81,7 +86,7 @@ if(isset($_POST['paymentmethod'])){
     </style>
 </head>
 
-<body onload="success(); totalCharge();calcRoute();" onchange="calcRoute();" onmousemove="calcRoute();" ontouchstart="calcRoute();success();" ontouchend="calcRoute();success();">>
+<body onload="success(); totalCharge();     calcRoute();" onchange="calcRoute();" onmousemove="calcRoute();" ontouchstart="calcRoute();success();" ontouchend="calcRoute();success();">>
 
     <?php include('navigation.php'); ?>
     <div class="container top">
@@ -180,6 +185,7 @@ if(isset($_POST['paymentmethod'])){
                 <label class="col-md control-label "><b>Total Charge</b></label>
                 <div class="input-group col-md-8">
                     <input name="total" class="form-control input-md" id="total" readonly value="<?php echo "$totalCharge"; ?>">
+                    <input name= "pointsBalance" id='pointsbal'  value="<?php echo $pointsBalance; ?>">
                     <div class="input-group-append">
                         <span class="input-group-text">LKR</span>
                     </div>
@@ -206,6 +212,29 @@ if(isset($_POST['paymentmethod'])){
                     <input name="payAmount" class="form-control input-md" id="payAmount" readonly required>
                     <div class="input-group-append">
                         <span class="input-group-text">LKR</span>
+                    </div>
+                </div>
+            </div>
+            <?php
+            $nic  = $_SESSION['user_data']['customerNic'];
+             $cpSql =mysqli_fetch_assoc(mysqli_query($db,"SELECT points FROM customer WHERE customerNic = '$nic'"));
+             $currentPoints = $cpSql['points'];
+             $restriction = "";
+             $c = 0;
+            
+            //$c = $totalCharge*20/100;
+             if($currentPoints>50){
+                $restriction = "";
+             }else{
+                 $restriction = "hidden";
+             }
+            ?>
+            <div id = "hide">
+                <div class="form-group" <?php echo $restriction;?>>
+                    <label class="col-md control-label ">You have earned <b style="color:red"><?php echo $currentPoints;?></b> points. If you need to use them now, please check below box.</label>
+                    <div class="col-md-8">
+                        I want to use my points <input type="checkbox"  id="myCheckbox" onclick ="totalCharge()">
+                        <input type="hidden" name="" id="curPo" value="<?php echo $currentPoints; ?>">
                     </div>
                 </div>
             </div>
@@ -239,7 +268,7 @@ if(isset($_POST['paymentmethod'])){
             <input type="hidden" name="city" value="Badulla">
             <input type="hidden" name="country" value="Sri Lanka">
             <input type="hidden" name="custom_1" value="<?php echo $origin.",".$destination.",".$vehicle.",".$time.",".$date1.",". $_SESSION['user_data']['customerNic'].",".$paymentType ; ?>"><br><br>
-
+            <input type="hidden" name="custom_2" value="<?php echo $pointsBalance; ?>">
 
 
             <!-- Confirm details Modal -->
@@ -331,14 +360,16 @@ function calcRoute(){
 
         function totalCharge() {
 
+            var checkBox = document.getElementById("myCheckbox");
+            var po = 0;
+            
+
             var vehicleRate = 0;
             //Get a reference to the form id="calCharges"
             var formCal = document.forms["calCharges"];
             //Get a reference to the select id="selectVehicle"
             var selectedVehicle = formCal.elements["selectVehicle"];
             var selectedMethod = formCal.elements["payment_method"];
-
-
             vehicleRate = vehicle_rates[selectedVehicle.value];
 
             //return selected vehicle rate - per 1km
@@ -348,7 +379,34 @@ function calcRoute(){
             distance = (1) * dist.value;
             var tot = (distance * vehicleRate);
             var totalCharge = tot.toFixed(2);
-            document.getElementById('total').value = totalCharge;
+            var x = document.getElementById("hide");
+            if(totalCharge>100 && selectedMethod.value == "full"){
+                x.style.display = "block";
+            }else{
+                x.style.display = "none";
+            }
+            var maxUsablePoints = totalCharge - 100;
+            po = document.getElementById("curPo").value;
+            if(selectedMethod.value == "full"){
+            if(checkBox.checked){
+                
+                if(po<maxUsablePoints){
+                    totalCharge = totalCharge - po;
+                    document.getElementById('pointsbal').value = 0;
+                    document.getElementById('total').value = totalCharge;
+                }if(po>=maxUsablePoints){
+                    totalCharge = totalCharge - maxUsablePoints;
+                    po = po - maxUsablePoints;
+                    document.getElementById('pointsbal').value = po; 
+                    document.getElementById('total').value = totalCharge;
+                }
+            }else{
+                document.getElementById('pointsbal').value = po;
+                document.getElementById('total').value = totalCharge;
+            }
+            }else{
+                document.getElementById('pointsbal').value = po;    
+            }
 
 
             var am = pay_methods[selectedMethod.value];
