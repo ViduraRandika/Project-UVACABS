@@ -57,15 +57,8 @@ function profile_edit()
     $resultEdit = mysqli_query($db, $qupdate);
 }
 
+?>
 
-?>
-<?php 
-if(isset($_GET['cnclBook'])){
-    $cancelBookingId = $_GET['cnclBook'];
-    mysqli_query($db,"UPDATE booking SET status = 'cancelled' WHERE bookingId = '$cancelBookingId'");
-}
-?>
- 
 <!DOCTYPE html>
 <html lang="en">
 
@@ -73,9 +66,6 @@ if(isset($_GET['cnclBook'])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-
-
 
     <title>User Profile</title>
 
@@ -87,8 +77,8 @@ if(isset($_GET['cnclBook'])){
 </head>
 
 <body>
-    <?php include('navigation.php') ?>
 
+    <?php include('navigation.php') ?>
 
     <div class="container emp-profile">
         <form method="post">
@@ -113,8 +103,6 @@ if(isset($_GET['cnclBook'])){
                     </div>
                 </div>
             </div>
-
-
 
             <div class="row">
 
@@ -227,29 +215,28 @@ if(isset($_GET['cnclBook'])){
                                                         <?php echo "<tr>"; ?>
                                                         <?php echo "<td>" . $row['origin'] . "</td>"; ?>
                                                         <?php echo "<td>" . $row['destination'] . "</td>"; ?>
-                                                        <?php 
+                                                        <?php
                                                         $bid = $row['bookingId'];
-                                                        $fd = mysqli_fetch_assoc(mysqli_query($db,"SELECT * FROM onlinepayment WHERE bookingId = '$bid'"));
-                                                        $charges="";
-                                                        if($fd['paymentType']=="advanced"){
-                                                            $charges = $fd['charges']*5;
-                                                        }
-                                                        else{
+                                                        $fd = mysqli_fetch_assoc(mysqli_query($db, "SELECT * FROM onlinepayment WHERE bookingId = '$bid'"));
+                                                        $charges = "";
+                                                        if ($fd['paymentType'] == "advanced") {
+                                                            $charges = $fd['charges'] * 5;
+                                                        } else {
                                                             $charges = $fd['charges'];
                                                         }
                                                         ?>
-                                                        <?php echo "<td>" . $charges. "</td>"; ?>
-                                                        <?php $sqlPoints = mysqli_fetch_assoc(mysqli_query($db,"SELECT points FROM customer where customerNic = '$n'"));
+                                                        <?php echo "<td>" . $charges . "</td>"; ?>
+                                                        <?php $sqlPoints = mysqli_fetch_assoc(mysqli_query($db, "SELECT points FROM customer where customerNic = '$n'"));
                                                         $points = $sqlPoints['points'];
                                                         ?>
-                                                        <?php echo "<td>" . $points. "</td>"; ?>
+                                                        <?php echo "<td>" . $points . "</td>"; ?>
                                                         <?php echo "</tr>"; ?>
                                                     <?php endwhile ?>
                                                 </tbody>
                                                 <?php mysqli_free_result($result); ?>
                                             <?php endif ?>
                                         </table>
-                                        
+
                                         <!--PAGINATION-->
                                         <ul class="pagination justify-content-end">
                                             <li class="page-item"><a class="page-link" href="#">Previous</a></li>
@@ -292,9 +279,9 @@ if(isset($_GET['cnclBook'])){
                                                         <?php echo "<td>" . $row2['tourTime'] . "</td>"; ?>
                                                         <?php echo "<td>" . $row2['tourDate'] . "</td>"; ?>
                                                         <?php echo "<td>" . $row2['driverNic'] . "</td>"; ?>
-                                                        <?php 
-                                                            $cncl = $row2['bookingId']; 
-                                                        echo "<td><a href=profile.php?cnclBook=$cncl>Cancel</a></td>"; ?>
+                                                        <?php
+                                                        $cncl = $row2['bookingId'];
+                                                        echo "<td><button type='button' class='btn btn-danger delete' id=del_" . $row2['bookingId'] . " data-id=" . $row2['bookingId'] . ">Cancel</button></td>"; ?>
                                                         <?php echo "</tr>"; ?>
                                                     <?php endwhile ?>
                                                 </tbody>
@@ -319,6 +306,7 @@ if(isset($_GET['cnclBook'])){
             </div>
         </form>
     </div>
+
 
     <script>
         function myFunctionfedit() {
@@ -351,10 +339,53 @@ if(isset($_GET['cnclBook'])){
     </script>
 
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="../js/bootbox.min.js"></script>
+    <script>
+        $(document).ready(function() {
+
+            // Delete 
+            $('.delete').click(function() {
+                var el = this;
+
+                // Delete id
+                var deleteid = $(this).data('id');
+
+                // Confirm box
+                bootbox.confirm("Do you really want to cancel this booking?", function(result) {
+
+                    if (result) {
+                        // AJAX Request
+                        $.ajax({
+                            url: 'cancelbookingajax.php',
+                            type: 'POST',
+                            data: {
+                                id: deleteid
+                            },
+                            success: function(response) {
+
+                                // Removing row from HTML Table
+                                if (response == 1) {
+                                    $(el).closest('tr').css('background', 'tomato');
+                                    $(el).closest('tr').fadeOut(800, function() {
+                                        $(this).remove();
+                                    });
+                                } else {
+                                    bootbox.alert('Cancelling failed. Please try again');
+                                }
+
+                            }
+                        });
+                    }
+
+                });
+
+            });
+        });
+    </script>
     <?php include('footer.php') ?>
+
 
 </body>
 
