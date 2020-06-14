@@ -1,6 +1,22 @@
 <?php
 
 include('../php/register.php');
+//permissions
+if(isset($_SESSION['user'])){
+	if($_SESSION['user']['user_type'] == "admin"){
+			header('location: ../admin/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "cashier"){
+		header('location: ../cashier/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "driver"){
+		header('location: ../driver/index.php');
+	}
+}
+
+
+
+
 include('../php/rememberme.php');
 
 $_SESSION['url'] = $_SERVER['REQUEST_URI'];
@@ -15,7 +31,7 @@ if (!isLoggedIn()) {
 include('../php/dbconfig.php');
 $n = $_SESSION['user']['nic'];
 $sql = "SELECT * FROM booking WHERE status ='completed' AND customerNic ='$n'";
-$sql2 = "SELECT * FROM booking WHERE customerNic ='$n' AND (status ='pending' OR status = 'notcompleted')";
+$sql2 = "SELECT * FROM booking INNER JOIN onlinepayment ON booking.bookingId = onlinepayment.bookingId WHERE customerNic ='$n' AND (status ='pending' OR status = 'notcompleted')";
 if (isset($_POST['update_btn'])) {
 
     profile_edit();
@@ -77,6 +93,15 @@ function profile_edit()
 </head>
 
 <body>
+    <?php
+    if(isset($_SESSION['bookingSuccess'])){
+        ?>
+        <script>window.alert("Your booking is success. Thank you!");</script>
+        <?php
+        unset($_SESSION['bookingSuccess']);
+    }
+
+    ?>
 
     <?php include('navigation.php') ?>
 
@@ -91,13 +116,13 @@ function profile_edit()
                         </h5>
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home">About</a>
+                                <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#booking">Booking</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile">History</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" id="profile-tab" data-toggle="tab" href="#booking">Booking</a>
+                                <a class="nav-link" id="home-tab" data-toggle="tab" href="#home">About</a>
                             </li>
                         </ul>
                     </div>
@@ -108,7 +133,7 @@ function profile_edit()
 
                 <div class="col-md-12">
                     <div class="tab-content profile-tab" id="myTabContent">
-                        <div class="tab-pane fade show active" id="home" role="tabpanel">
+                        <div class="tab-pane fade " id="home" role="tabpanel">
                             <form action="profile.php" method="POST">
                                 <?php if (isset($_SESSION['user'])) : ?>
 
@@ -207,7 +232,6 @@ function profile_edit()
                                                 <th>Start</th>
                                                 <th>Destination</th>
                                                 <th>Price</th>
-                                                <th>Points</th>
                                             </thead>
                                             <?php if ($result = mysqli_query($db, $sql)) : ?>
                                                 <tbody>
@@ -229,28 +253,20 @@ function profile_edit()
                                                         <?php $sqlPoints = mysqli_fetch_assoc(mysqli_query($db, "SELECT points FROM customer where customerNic = '$n'"));
                                                         $points = $sqlPoints['points'];
                                                         ?>
-                                                        <?php echo "<td>" . $points . "</td>"; ?>
                                                         <?php echo "</tr>"; ?>
                                                     <?php endwhile ?>
                                                 </tbody>
                                                 <?php mysqli_free_result($result); ?>
                                             <?php endif ?>
                                         </table>
-
-                                        <!--PAGINATION-->
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                                            <li class="page-item active"><a class="page-link " href="#">1</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                                        </ul>
+                                        <h5 style="color: red;">Total points earned : <?php echo $points;?></h5>
+                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <!--Booking-->
-                        <div class="tab-pane fade" id="booking" role="tabpanel">
+                        <div class="tab-pane fade active show" id="booking" role="tabpanel">
                             <div class="row">
                                 <div class="col-md-12">
                                     <h4>Current Bookings</h4>
@@ -279,9 +295,45 @@ function profile_edit()
                                                         <?php echo "<td>" . $row2['tourTime'] . "</td>"; ?>
                                                         <?php echo "<td>" . $row2['tourDate'] . "</td>"; ?>
                                                         <?php echo "<td>" . $row2['driverNic'] . "</td>"; ?>
+                                                        
+                                                        
                                                         <?php
                                                         $cncl = $row2['bookingId'];
                                                         echo "<td><button type='button' class='btn btn-danger delete' id=del_" . $row2['bookingId'] . " data-id=" . $row2['bookingId'] . ">Cancel</button></td>"; ?>
+                                                        <?php if($row2['paymentType']="advanced")
+                                                        {?><td>
+                                                            <form id="myForm<?php echo $row2['bookingId'];?>" action="https://sandbox.payhere.lk/pay/checkout" method="POST">
+                                                                <input type = "button"  class="btn btn-link" value="Complete Payment" onclick="myFunction<?php echo $row2['bookingId'];?>();">
+                                                                <input  type="hidden" name="merchant_id" value="1213832"> <!-- Replace your Merchant ID -->
+                                                                <input type="hidden" name="return_url" value="http://uvacabs.company/user/profile.php">
+                                                                <input type="hidden" name="cancel_url" value="http://uvacabs.company/user/profile.php">
+                                                                <input type="hidden" name="notify_url" value="http://uvacabs.company/user/completepayment.php">
+                                                                <input type="hidden" name="order_id" value="<?php $row2['bookingId'];?>">
+                                                                <input type="hidden" name="items" value="Vehicle Booking"><br>
+                                                                <input type="hidden" name="currency" value="LKR">
+                                                                <input type="hidden" id="amount" name="amount" value="<?php echo $row2['charges']*4; ?>" readonly>
+                                                                <input type="hidden" name="first_name" value="<?php echo $_SESSION['user_data']['customerFname']; ?>">
+                                                                <input type="hidden" name="last_name" value="<?php echo $_SESSION['user_data']['customerLname']; ?>">
+                                                                <input type="hidden" name="email" value="<?php echo $_SESSION['user_data']['customerEmail']; ?>">
+                                                                <input type="hidden" name="phone" value="<?php echo $_SESSION['user_data']['customerContactNo']; ?>"><br>
+                                                                <input type="hidden" name="address" value="<?php echo $_SESSION['user_data']['customerAddress']; ?>">
+                                                                <input type="hidden" name="city" value="Badulla">
+                                                                <input type="hidden" name="country" value="Sri Lanka">
+                                                                <input type="hidden" name="custom_1" value="<?php echo $row2['charges']*5; ?>">
+                                                                <input type="hidden" name="custom_2" value="">
+                                                                
+                                                            </form>
+                                                            <script>
+                                                                function myFunction<?php echo $row2['bookingId'];?>() {
+                                                                document.getElementById("myForm<?php echo $row2['bookingId'];?>").submit();
+                                                                }
+                                                            </script>
+                                                            
+                                                                </td>
+                                                        <?php
+                                                        }?>
+                                                        
+                                                        
                                                         <?php echo "</tr>"; ?>
                                                     <?php endwhile ?>
                                                 </tbody>
@@ -290,13 +342,7 @@ function profile_edit()
                                             <?php mysqli_close($db); ?>
                                         </table>
 
-                                        <ul class="pagination justify-content-end">
-                                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                                            <li class="page-item active"><a class="page-link " href="#">1</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                                        </ul>
+                                        
                                     </div>
                                 </div>
                             </div>

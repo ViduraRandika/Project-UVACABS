@@ -1,4 +1,23 @@
 <?php include('../php/register.php') ?>
+
+<?php 
+//permissions
+if(isset($_SESSION['user'])){
+	if($_SESSION['user']['user_type'] == "admin"){
+			header('location: ../admin/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "cashier"){
+		header('location: ../cashier/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "driver"){
+		header('location: ../driver/index.php');
+    }
+    if($_SESSION['user']['user_type'] == "customer"){
+		header('location: ../index.php');
+	}
+}
+?>
+
 <?php include('../php/rememberme.php')?>
 
 <!DOCTYPE html>
@@ -21,7 +40,15 @@
 <body class="body-login">
 
     <?php include('navigation.php') ?>
-
+    <?php 
+                                if(isset($_SESSION['newpwd'])){
+                                    if($_SESSION['newpwd']="updated"){?>
+                                    <script>window.alert("New passwword updated");</script>
+                                    <?php
+                                        unset($_SESSION['newpwd']);
+                                    }
+                                }
+                            ?>
 
     <div class="container h-100">
         <div class="d-flex justify-content-center h-100">
@@ -45,13 +72,7 @@
                         </div>
                         <?php endif ?>
                         <div class="error">
-                            <p><?php 
-                                if(isset($_GET['newpwd'])){
-                                    if($_GET['newpwd']="updated"){
-                                        echo "New Password Updated";
-                                    }
-                                }
-                            ?></p>
+                            <p></p>
                         </div>
                         <div class="input-group mb-3">
                             <div class="input-group-append">

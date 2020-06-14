@@ -1,4 +1,19 @@
 <?php 
+session_start();
+//permissions
+if(isset($_SESSION['user'])){
+	if($_SESSION['user']['user_type'] == "cashier"){
+		header('location: ../../cashier/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "driver"){
+		header('location: ../../driver/index.php');
+    }
+    if($_SESSION['user']['user_type'] == "customer"){
+		header('location: ../../index.php');
+	}
+}
+
+
       include('php/dbconfig.php');
       $sql1 = "SELECT count(*) FROM customer";
       $result1 = mysqli_query($db,$sql1);

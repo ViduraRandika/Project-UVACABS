@@ -1,3 +1,5 @@
+
+
 <?php
 	$u = "home";
     $index = "index.php";
@@ -10,6 +12,22 @@
 ?>
 
 	<?php include('php/register.php') ?>
+
+	
+	<?php 
+	//permissions
+	if(isset($_SESSION['user'])){
+	if($_SESSION['user']['user_type'] == "admin"){
+			header('location: admin/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "cashier"){
+		header('location: cashier/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "driver"){
+		header('location: driver/index.php');
+	}
+}
+?>
 	<?php include('php/rememberme.php')?>
 	<!DOCTYPE html>
 	<html lang="zxx" class="no-js">
@@ -33,9 +51,17 @@
 	<body>
 
 		<?php
-		if(isset($_SESSION['feedback_success'])){
-			echo $_SESSION['feedback_success'];
-			unset ($_SESSION['feedback_success']);
+		// if(isset($_SESSION['feedback_success'])){
+		// 	echo $_SESSION['feedback_success'];
+		// 	unset ($_SESSION['feedback_success']);
+		// }?>
+		<?php 
+		if(isset($_SESSION['bookingUnsuccess'])){ ?>
+			<script>
+				window.alert("Something went wrong, booking not success")
+			</script>
+		<?php
+		unset($_SESSION['bookingUnsuccess']);
 		}
 		?>
 		<!-- start banner Area -->

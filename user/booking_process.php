@@ -49,7 +49,7 @@ if($paymentType == "full"){
 
    //send email to company email for notify about new booking
 
-   //   sendemailtoadmin();
+   sendemailtoadmin($order_id);
    
    
 }
@@ -63,7 +63,7 @@ function sendemailtocustomer($email,$order_id){
   
 
 $url = 'https://api.sendgrid.com/';
-$user = 'vidura1996';
+$user = 'vidurarandika96@gmail';
 $pass = '20168268werty';
 
 $json_string = array(
@@ -82,7 +82,7 @@ $params = array(
     'x-smtpapi' => json_encode($json_string),
     'to'        => $email,
     'subject'   => 'Booking Success',
-    'html'      => '<p>Your booking is success.</p><br><p>Booking id : '.$order_id.'</p><br><br><p>Thank you!</p>'
+    'html'      => '<p>Your booking is success.</p><br><p>Booking id : '.$order_id.'</p><br>If you have any problem please <a href="www.uvacabs.company/user/contactus.php">contact us</a><br><p>Thank you!</p>'
                     ,
     'from'      => "noreply@uvacabs.company",
   );
@@ -107,14 +107,14 @@ $response = curl_exec($session);
 curl_close($session);
 
 // print everything out
-print_r($response);
+//print_r($response);
 
 }
 
 
 function sendemailtoadmin($order_id){
    $url = 'https://api.sendgrid.com/';
-$user = 'vidura1996';
+$user = 'vidurarandika96@gmail.com';
 $pass = '20168268werty';
 
 $json_string = array(
@@ -161,5 +161,5 @@ curl_close($session);
 print_r($response);
 
 }
-}
+
 ?>

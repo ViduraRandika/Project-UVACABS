@@ -3,7 +3,7 @@
 function sendActivationLink($email,$first_name,$nic,$user_type){
 
 $url = 'https://api.sendgrid.com/';
-		$user = 'vidura1996';
+		$user = 'vidurarandika96@gmail.com';
 		$pass = '20168268werty';
 
 		$json_string = array(

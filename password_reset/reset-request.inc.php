@@ -1,7 +1,7 @@
 <?php
 
 include('../php/dbconfig.php');
-
+session_start();
 if ($_POST['reset-request-submit']) {
     
     $userEmail = $_POST['email'];
@@ -59,7 +59,7 @@ if ($_POST['reset-request-submit']) {
         mysqli_stmt_close($stmt2);
 
         $url = 'https://api.sendgrid.com/';
-        $user = 'vidura1996';
+        $user = 'vidurarandika96@gmail.com';
         $pass = '20168268werty';
 
         $json_string = array(
@@ -67,11 +67,11 @@ if ($_POST['reset-request-submit']) {
             'to' => array(
                 $userEmail,
             ),
-            'category' => 'Customer Feedback'
+            'category' => 'Password Reset'
         );
 
         $id = 2121;
-        $msg = "http://www.uvacabs.company?id" + $id;
+        $msg = "http://www.uvacabs.company?id=".$id;
         $params = array(
             'api_user'  => $user,
             'api_key'   => $pass,
@@ -104,11 +104,14 @@ if ($_POST['reset-request-submit']) {
 
         // print everything out
         print_r($response);
-        header('location: reset-password.php?reset=success');
+        $_SESSION['reset'] = "success";
+        header('location: reset-password.php');
     } else {
-       header('location: reset-password.php?reset=invalid');
+        $_SESSION['reset'] = "invalid";
+       header('location: reset-password.php');
     }
 } else {
-   header('location: reset-password.php?reset=invalid');
+    $_SESSION['reset'] = "invalid";
+header('location: reset-password.php');
 }
 ?>

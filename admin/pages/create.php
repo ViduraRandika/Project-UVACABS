@@ -1,5 +1,20 @@
-<?php 
-if(isset($_SESSION['success'])){
+<?php
+
+//permissions
+if (isset($_SESSION['user'])) {
+  if ($_SESSION['user']['user_type'] == "cashier") {
+    header('location: ../../cashier/index.php');
+  }
+  if ($_SESSION['user']['user_type'] == "driver") {
+    header('location: ../../driver/index.php');
+  }
+  if ($_SESSION['user']['user_type'] == "customer") {
+    header('location: ../../index.php');
+  }
+}
+
+
+if (isset($_SESSION['success'])) {
   echo "<h5>Success</h5>";
   unset($_SESSION['success']);
 }
@@ -29,12 +44,12 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
 </head>
 
 <body class="">
-<?php 
-if(isset($_SESSION['notfound'])){
-  echo "<h5>NIC NOT FOUND</h5>";
-  unset($_SESSION['notfound']);
-}
-?>
+  <?php
+  if (isset($_SESSION['notfound'])) {
+    echo "<h5>NIC NOT FOUND</h5>";
+    unset($_SESSION['notfound']);
+  }
+  ?>
 
   <div class="wrapper ">
     <div class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
@@ -88,13 +103,24 @@ if(isset($_SESSION['notfound'])){
           <div class="row">
             <div class="col-md-12">
               <div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title ">Customer Details</h4>
+                <div class="container">
+                  <div class="card-header card-header-primary row">
 
+                    <div class="col-3">
+                      <h4 class="card-title ">Customer Details</h4>
+
+                    </div>
+                    <div class="col">
+                      <input class="form-control" style="color: white;"  id="customerInput" style="color:white;" onkeyup="customerSearch();" type="search" placeholder="Search" aria-label="Search">
+                    </div>
+                    <div class="col-3">
+                      <button style="margin-left:50px;" class="btn btn-light my-2 my-sm-0" type="submit">ADD A CUSTOMER</button>
+                    </div>
+                  </div>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="customer">
                       <thead class=" text-primary">
 
                         <th>NIC</th>
@@ -111,7 +137,7 @@ if(isset($_SESSION['notfound'])){
                         <tbody>
                           <?php while ($row = mysqli_fetch_array($result1)) : ?>
                             <?php "<tr>"; ?>
-                            <?php $id = $row['customerNic']?>
+                            <?php $id = $row['customerNic'] ?>
                             <?php echo "<td><a href=selectcus.php?sc=$id>" . $row['customerNic'] . "</a></td>"; ?>
                             <?php echo "<td>" . $row['customerFname'] . "</td>"; ?>
                             <?php echo "<td>" . $row['customerLname'] . "</td>"; ?>
@@ -136,13 +162,24 @@ if(isset($_SESSION['notfound'])){
 
             <div class="col-md-12">
               <div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title ">Driver Details</h4>
+              <div class="container">
+                  <div class="card-header card-header-primary row">
 
+                    <div class="col-3">
+                      <h4 class="card-title ">Driver Details</h4>
+
+                    </div>
+                    <div class="col">
+                      <input class="form-control" style="color: white;"  id="driverInput" onkeyup="driverSearch();" type="search" placeholder="Search" aria-label="Search">
+                    </div>
+                    <div class="col-3">
+                      <button style="margin-left:50px;" class="btn btn-light my-2 my-sm-0" type="submit">ADD A CUSTOMER</button>
+                    </div>
+                  </div>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="driver">
                       <thead class=" text-primary">
 
                         <th>NIC</th>
@@ -156,7 +193,7 @@ if(isset($_SESSION['notfound'])){
                         <tbody>
                           <?php while ($row = mysqli_fetch_array($result2)) : ?>
                             <?php "<tr>"; ?>
-                            <?php $id = $row['driverNic']?>
+                            <?php $id = $row['driverNic'] ?>
                             <?php echo "<td><a href=selectdrive.php?sd=$id>" . $row['driverNic'] . "</a></td>"; ?>
                             <?php echo "<td>" . $row['driverFname'] . "</td>"; ?>
                             <?php echo "<td>" . $row['driverLname'] . "</td>"; ?>
@@ -178,13 +215,24 @@ if(isset($_SESSION['notfound'])){
 
             <div class="col-md-12">
               <div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title ">Cashier Details</h4>
+              <div class="container">
+                  <div class="card-header card-header-primary row">
 
+                    <div class="col-3">
+                      <h4 class="card-title ">Cashier Details</h4>
+
+                    </div>
+                    <div class="col">
+                      <input class="form-control" onkeyup="cashierSearch();" id="cashierInput" type="search" placeholder="Search" aria-label="Search">
+                    </div>
+                    <div class="col-3">
+                      <button style="margin-left:50px;" class="btn btn-light my-2 my-sm-0" type="submit">ADD A CUSTOMER</button>
+                    </div>
+                  </div>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="cashier">
                       <thead class=" text-primary">
 
                         <th>NIC</th>
@@ -197,8 +245,8 @@ if(isset($_SESSION['notfound'])){
                         <tbody>
                           <?php while ($row = mysqli_fetch_array($result3)) : ?>
                             <?php "<tr>"; ?>
-                            <?php $id = $row['cashierNic']?>
-                            <?php echo "<td><a href=selectcash.php?sca=$id>" .$row['cashierNic'] . "</a></td>"; ?>
+                            <?php $id = $row['cashierNic'] ?>
+                            <?php echo "<td><a href=selectcash.php?sca=$id>" . $row['cashierNic'] . "</a></td>"; ?>
                             <?php echo "<td>" . $row['cashierName'] . "</td>"; ?>
                             <?php echo "<td>" . $row['cashierAddress'] . "</td>"; ?>
                             <?php echo "<td>" . $row['cashierContactNo'] . "</td>"; ?>
@@ -216,12 +264,22 @@ if(isset($_SESSION['notfound'])){
 
             <div class="col-md-12">
               <div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title ">Removed Users</h4>
+              <div class="container">
+                  <div class="card-header card-header-primary row">
+
+                    <div class="col-3">
+                      <h4 class="card-title ">Removed Users</h4>
+
+                    </div>
+                    <div class="col">
+                      <input class="form-control" style="color: white;" onkeyup="removedUsers();" id="removeInput" type="search" placeholder="Search" aria-label="Search">
+                    </div>
+                   
+                  </div>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="remove">
                       <thead class=" text-primary">
                         <th>NIC</th>
                         <th>First Name</th>
@@ -229,44 +287,44 @@ if(isset($_SESSION['notfound'])){
                         <th>User Type</th>
                         <th></th>
                       </thead>
-                      
-                      <?php 
+
+                      <?php
                       $ru = "SELECT nic FROM login WHERE user_type='removed'";
                       if ($result2 = mysqli_query($db, $ru)) : ?>
                         <tbody>
                           <?php while ($row = mysqli_fetch_array($result2)) : ?>
                             <?php "<tr>"; ?>
                             <?php $id = $row['nic'];
-                              $ru1 = "SELECT * FROM customer WHERE customerNic =  '$id' ";
-                              $ru2 = "SELECT * FROM driver WHERE driverNic =  '$id'";
-                              $ru3 = "SELECT * FROM cashier WHERE cashierNic =  '$id'";
-                              $re1= mysqli_query($db, $ru1);
-                              $re2= mysqli_query($db, $ru2);
-                              $re3= mysqli_query($db, $ru3);
-                              if(mysqli_num_rows($re1)==1){
-                                $r = mysqli_fetch_assoc($re1);
-                                echo "<td>" . $r['customerNic'] . "</td>";
-                                echo "<td>" . $r['customerFname'] . "</td>";
-                                echo "<td>" . $r['customerLname'] . "</td>";
-                                echo "<td>Customer</td>";
-                                echo "<td><a href=php/add.php?au=$id>Add</a></td>";
-                              }
-                              if(mysqli_num_rows($re2)==1){
-                                $r = mysqli_fetch_assoc($re2);
-                                echo "<td>" . $r['driverNic'] . "</td>";
-                                echo "<td>" . $r['driverFname'] . "</td>";
-                                echo "<td>" . $r['driverLname'] . "</td>";
-                                echo "<td>Driver</td>";
-                                echo "<td><a href=php/add.php?ad=$id>Add</a></td>";
-                              }
-                              if(mysqli_num_rows($re3)==1){
-                                $r = mysqli_fetch_assoc($re3);
-                                echo "<td>" . $r['cashierNic'] . "</td>";
-                                echo "<td>" . $r['cashierName'] . "</td>";
-                                echo "<td></td>";
-                                echo "<td>Cashier</td>";
-                                echo "<td><a href=php/add.php?ac=$id>Add</a></td>";
-                              }
+                            $ru1 = "SELECT * FROM customer WHERE customerNic =  '$id' ";
+                            $ru2 = "SELECT * FROM driver WHERE driverNic =  '$id'";
+                            $ru3 = "SELECT * FROM cashier WHERE cashierNic =  '$id'";
+                            $re1 = mysqli_query($db, $ru1);
+                            $re2 = mysqli_query($db, $ru2);
+                            $re3 = mysqli_query($db, $ru3);
+                            if (mysqli_num_rows($re1) == 1) {
+                              $r = mysqli_fetch_assoc($re1);
+                              echo "<td>" . $r['customerNic'] . "</td>";
+                              echo "<td>" . $r['customerFname'] . "</td>";
+                              echo "<td>" . $r['customerLname'] . "</td>";
+                              echo "<td>Customer</td>";
+                              echo "<td><a href=php/add.php?au=$id>Add</a></td>";
+                            }
+                            if (mysqli_num_rows($re2) == 1) {
+                              $r = mysqli_fetch_assoc($re2);
+                              echo "<td>" . $r['driverNic'] . "</td>";
+                              echo "<td>" . $r['driverFname'] . "</td>";
+                              echo "<td>" . $r['driverLname'] . "</td>";
+                              echo "<td>Driver</td>";
+                              echo "<td><a href=php/add.php?ad=$id>Add</a></td>";
+                            }
+                            if (mysqli_num_rows($re3) == 1) {
+                              $r = mysqli_fetch_assoc($re3);
+                              echo "<td>" . $r['cashierNic'] . "</td>";
+                              echo "<td>" . $r['cashierName'] . "</td>";
+                              echo "<td></td>";
+                              echo "<td>Cashier</td>";
+                              echo "<td><a href=php/add.php?ac=$id>Add</a></td>";
+                            }
 
                             ?>
                             <?php echo "</tr>"; ?>
@@ -284,6 +342,193 @@ if(isset($_SESSION['notfound'])){
       </div>
     </div>
   </div>
+
+
+  <!-- SEARCH CUSTOMER TABLE -->
+<script>
+function customerSearch() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("customerInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("customer");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[2];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[4];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[5];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }  
+      }
+    }  
+      }
+    }  
+      }
+    }  
+      }
+    }       
+  }
+}
+</script>
+
+<!-- Driver details table search -->
+<script>
+function driverSearch() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("driverInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("driver");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[2];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[4];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }  
+      }
+    }  
+      }
+    }  
+      }
+    }       
+  }
+}
+</script>
+
+<!-- cashier table search -->
+<script>
+function cashierSearch() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("cashierInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("cashier");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[3];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }tr[i].style.display = "none";
+      }
+    }
+      }
+    }       
+  }
+}
+</script>
+
+
+<!-- removed users details -->
+<script>
+function removedUsers() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("removeInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("remove");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[2];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[3];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    } 
+      }
+    } 
+      }
+    } 
+      }
+    }       
+  }
+}
+</script>
+
 
   <!--   Core JS Files   -->
   <script src="../assets/js/core/jquery.min.js"></script>

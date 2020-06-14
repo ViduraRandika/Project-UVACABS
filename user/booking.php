@@ -1,7 +1,23 @@
+
 <?php
 $u = "booking";
 
 include('../php/register.php');
+
+//permissions 
+if(isset($_SESSION['user'])){
+	if($_SESSION['user']['user_type'] == "admin"){
+			header('location: ../admin/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "cashier"){
+		header('location: ../cashier/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "driver"){
+		header('location: ../driver/index.php');
+	}
+}
+
+
 include('../php/rememberme.php');
 $_SESSION['url'] = $_SERVER['REQUEST_URI'];
 if (!isLoggedIn()) {
@@ -185,7 +201,7 @@ if(isset($_POST['paymentmethod'])){
                 <label class="col-md control-label "><b>Total Charge</b></label>
                 <div class="input-group col-md-8">
                     <input name="total" class="form-control input-md" id="total" readonly value="<?php echo "$totalCharge"; ?>">
-                    <input name= "pointsBalance" id='pointsbal'  value="<?php echo $pointsBalance; ?>">
+                    <input name= "pointsBalance" id='pointsbal'  value="<?php echo $pointsBalance; ?> hidden">
                     <div class="input-group-append">
                         <span class="input-group-text">LKR</span>
                     </div>
@@ -196,7 +212,7 @@ if(isset($_POST['paymentmethod'])){
 
             <div class="col-md-8">
                 <div class="form-group">
-                    <label class=" control-label"><b> Payment Type*</b></label>
+                    <label class=" control-label"><b> Payment Type*</b><p>  - If you paying full payment at once and if you have enough points in account you can use them. </p></label>
                     <div class="">
                         <select name="paymentmethod" id="payment_method" class="form-control" onchange="totalCharge()" onloadeddata="totalCharge()">
                             <option value="advanced">Advanced Payment</option>

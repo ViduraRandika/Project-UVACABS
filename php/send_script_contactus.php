@@ -1,11 +1,12 @@
 <?php
+if(isset($_POST['send_message_btn'])){
 $email = $_POST['email'];
 $fname = $_POST['fname'];
 $lname = $_POST['lname'];
 $msg = $_POST['msg'];
 
 $url = 'https://api.sendgrid.com/';
-$user = 'vidura1996';
+$user = 'vidurarandika96@gmail.com';
 $pass = '20168268werty';
 
 $json_string = array(
@@ -16,19 +17,18 @@ $json_string = array(
   'category' => 'Customer Feedback'
 );
 
-$id = 2121;
-$msg = "http://www.uvacabs.company?id"+$id;
+
 $params = array(
     'api_user'  => $user,
     'api_key'   => $pass,
     'x-smtpapi' => json_encode($json_string),
-    'to'        => 'vidurarandika96@gmail.com',
+    'to'        => 'uvacabs0@gmail.com',
     'subject'   => 'Customer Feedback',
     'html'      => '<h3>From: '.$fname.' '.$lname.'</h3>
                     <br>
-                    <p><a href =http://www.uvacabs.company/index.php?id='.$id.'rem='.$id.'>LINK</a></p>'
+                    <p>'.$msg.'</p><br><p>Sent from '.$email.'</p'
                     ,
-    'from'      => "admin@uvacabs.company",
+    'from'      => "customerfeedback@uvacabs.company",
   );
 
 
@@ -52,6 +52,9 @@ curl_close($session);
 
 // print everything out
 print_r($response);
+session_start();
+$_SESSION['feedback']='sent';
+header('location: ../user/contactus.php');
 
-
+}
 ?>

@@ -1,4 +1,17 @@
-<?php include('php/createUser.php'); ?>
+<?php 
+//permissions
+if(isset($_SESSION['user'])){
+	if($_SESSION['user']['user_type'] == "cashier"){
+		header('location: ../../cashier/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "driver"){
+		header('location: ../../driver/index.php');
+    }
+    if($_SESSION['user']['user_type'] == "customer"){
+		header('location: ../../index.php');
+	}
+}
+include('php/createUser.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 

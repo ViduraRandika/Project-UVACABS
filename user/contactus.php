@@ -1,6 +1,22 @@
+
+
 <?php 
     $u = "contactus";
     include('../php/register.php');
+
+//permissions 
+if(isset($_SESSION['user'])){
+	if($_SESSION['user']['user_type'] == "admin"){
+			header('location: ../admin/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "cashier"){
+		header('location: ../cashier/index.php');
+	}
+	if($_SESSION['user']['user_type'] == "driver"){
+		header('location: ../driver/index.php');
+	}
+}
+
     include('../php/rememberme.php');
 ?>
 <!DOCTYPE html>
@@ -21,6 +37,14 @@
   <?php include('navigation.php'); ?>
 
     <br>
+    <?php
+    
+        if(isset($_SESSION['feedback'])){
+            echo '<script>window.alert("Feedback received. Thank You!")</script>';
+            unset($_SESSION['feedback']);
+        }
+
+    ?>
 
     <div class="container contact">
         <div class="row">

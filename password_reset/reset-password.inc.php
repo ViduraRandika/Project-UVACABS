@@ -5,12 +5,14 @@ if(isset($_POST['reset-password-submit'])){
     $validator = $_POST['validator'];
     $password = $_POST['pwd'];
     $passwordRepeat = $_POST['pwd-repeat'];
-
+    session_start();
     if(empty($password)||empty($passwordRepeat)){
-        header('location: create-new-password.php?newpwd=empty');
+        $_SESSION['newpwd'] = "empty";
+        header('location: create-new-password.php?selector='.$selector.'&validator='.$validator); 
         exit();
     }elseif($password != $passwordRepeat){
-        header('location: create-new-password.php?newpwd=pwdnotsame'); 
+        $_SESSION['newpwd'] = "pwdnotsame";
+        header('location: create-new-password.php?selector='.$selector.'&validator='.$validator); 
         exit();
     }else{
         $currentDate = date("U");
@@ -98,7 +100,8 @@ if(isset($_POST['reset-password-submit'])){
                                                         }else{
                                                             mysqli_stmt_bind_param($stmt4,"s",$tokenEmail);
                                                             mysqli_stmt_execute($stmt4);
-                                                            header('location: ../user/login.php?newpwd=updated');
+                                                            $_SESSION['newpwd'] = "updated" ;
+                                                            header('location: ../user/login.php');
                                                         }
                         
                                                     }
@@ -125,7 +128,8 @@ if(isset($_POST['reset-password-submit'])){
                                                 }else{
                                                     mysqli_stmt_bind_param($stmt4,"s",$tokenEmail);
                                                     mysqli_stmt_execute($stmt4);
-                                                    header('location: ../user/login.php?newpwd=updated');
+                                                    $_SESSION['newpwd'] = "updated";
+                                                    header('location: ../user/login.php');
                                                 }
                 
                                             }
@@ -152,7 +156,7 @@ if(isset($_POST['reset-password-submit'])){
                                         }else{
                                             mysqli_stmt_bind_param($stmt4,"s",$tokenEmail);
                                             mysqli_stmt_execute($stmt4);
-                                            header('location: ../user/login.php?newpwd=updated');
+                                            header('location: ../user/login.php');
                                         }
         
                                     }
@@ -179,7 +183,7 @@ if(isset($_POST['reset-password-submit'])){
                                 }else{
                                     mysqli_stmt_bind_param($stmt4,"s",$tokenEmail);
                                     mysqli_stmt_execute($stmt4);
-                                    header('location: ../user/login.php?newpwd=updated');
+                                    header('location: ../user/login.php');
                                 }
 
                             }
