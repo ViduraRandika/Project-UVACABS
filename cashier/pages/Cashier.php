@@ -1,3 +1,26 @@
+<?php 
+include('php/dbconfig.php');
+include('../../php/register.php');
+
+
+session_start();
+ 
+  if (isset($_SESSION['user'])) {
+    if ($_SESSION['user']['user_type'] == "admin") {
+      header('location: ../../admin/index.php');
+    }
+    if ($_SESSION['user']['user_type'] == "driver") {
+      header('location: ../../driver/index.php');
+    }
+    if ($_SESSION['user']['user_type'] == "user") {
+      header('location: ../../index.php');
+    }
+  }else{
+    header('location: ../../user/login.php');
+  }
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -44,6 +67,12 @@
                                 <p>View Booking Details</p>
                             </a>
                         </li>
+                        <li class="nav-item active-pro ">
+                            <a class="nav-link" href="Cashier.php?logout='1'">
+                                <i class="material-icons">save_alt</i>
+                                <p>LOGOUT</p>
+                            </a>
+                        </li>
                 </ul>
             </div>
         </div>
@@ -58,17 +87,19 @@
                             <div class="card card-stats">
                                 <div class="card-header card-header-warning card-header-icon">
                                     <div class="card-icon">
-                                        <i class="material-icons">content_copy</i>
+                                        <i class="material-icons">local_taxi</i>
                                     </div>
-                                    <p class="card-category">Used Space</p>
-                                    <h3 class="card-title">49/50
-                                        <small>GB</small>
+                                    <p class="card-category">No of vehicles</p>
+                                    <h3 class="card-title">
+                                    <?php 
+                                    $noOfVehicles = mysqli_num_rows(mysqli_query($db,"SELECT * FROM vehicle"));
+                                    echo $noOfVehicles;
+                                    ?>   
                                     </h3>
                                 </div>
                                 <div class="card-footer">
                                     <div class="stats">
-                                        <i class="material-icons text-danger">warning</i>
-                                        <a href="javascript:;">Get More Space...</a>
+                                       
                                     </div>
                                 </div>
                             </div>
@@ -77,50 +108,44 @@
                             <div class="card card-stats">
                                 <div class="card-header card-header-success card-header-icon">
                                     <div class="card-icon">
-                                        <i class="material-icons">store</i>
+                                        <i class="material-icons">notifications_active</i>
                                     </div>
-                                    <p class="card-category">Revenue</p>
-                                    <h3 class="card-title">$34,245</h3>
+                                    <p class="card-category">New Bookings</p>
+                                    <h3 class="card-title">
+                                    <?php 
+                                    $noOfNewBookings = mysqli_num_rows(mysqli_query($db,"SELECT * FROM booking WHERE status = 'pending'"));
+                                    echo $noOfNewBookings;
+                                    ?>    </h3>
                                 </div>
                                 <div class="card-footer">
                                     <div class="stats">
-                                        <i class="material-icons">date_range</i> Last 24 Hours
+                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-6 col-sm-6">
                             <div class="card card-stats">
-                                <div class="card-header card-header-danger card-header-icon">
+                                <div class="card-header card-header-primary card-header-icon">
                                     <div class="card-icon">
-                                        <i class="material-icons">info_outline</i>
+                                        <i class="material-icons">person</i>
                                     </div>
-                                    <p class="card-category">Fixed Issues</p>
-                                    <h3 class="card-title">75</h3>
+                                    <p class="card-category">Total Users</p>
+                                    <h3 class="card-title">
+                                        <?php
+                                        echo mysqli_num_rows(mysqli_query($db,"SELECT * FROM login"));
+                                        ?>
+
+                                    </h3>
                                 </div>
                                 <div class="card-footer">
                                     <div class="stats">
-                                        <i class="material-icons">local_offer</i> Tracked from Github
+                                        
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-6 col-sm-6">
-                            <div class="card card-stats">
-                                <div class="card-header card-header-info card-header-icon">
-                                    <div class="card-icon">
-                                        <i class="fa fa-twitter"></i>
-                                    </div>
-                                    <p class="card-category">Followers</p>
-                                    <h3 class="card-title">+245</h3>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="stats">
-                                        <i class="material-icons">update</i> Just Updated
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -131,45 +156,8 @@
             <script src="../assets/js/core/popper.min.js"></script>
             <script src="../assets/js/core/bootstrap-material-design.min.js"></script>
             <script src="../assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
-            <!-- Plugin for the momentJs  -->
-            <script src="../assets/js/plugins/moment.min.js"></script>
-            <!--  Plugin for Sweet Alert -->
-            <script src="../assets/js/plugins/sweetalert2.js"></script>
-            <!-- Forms Validations Plugin -->
-            <script src="../assets/js/plugins/jquery.validate.min.js"></script>
-            <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
-            <script src="../assets/js/plugins/jquery.bootstrap-wizard.js"></script>
-            <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
-            <script src="../assets/js/plugins/bootstrap-selectpicker.js"></script>
-            <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
-            <script src="../assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
-            <!--  DataTables.net Plugin, full documentation here: https://datatables.net/  -->
-            <script src="../assets/js/plugins/jquery.dataTables.min.js"></script>
-            <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
-            <script src="../assets/js/plugins/bootstrap-tagsinput.js"></script>
-            <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
-            <script src="../assets/js/plugins/jasny-bootstrap.min.js"></script>
-            <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
-            <script src="../assets/js/plugins/fullcalendar.min.js"></script>
-            <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
-            <script src="../assets/js/plugins/jquery-jvectormap.js"></script>
-            <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
-            <script src="../assets/js/plugins/nouislider.min.js"></script>
-            <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
-            <!-- Library for adding dinamically elements -->
-            <script src="../assets/js/plugins/arrive.min.js"></script>
-            <!--  Google Maps Plugin    -->
-            <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
-            <!-- Chartist JS -->
-            <script src="../assets/js/plugins/chartist.min.js"></script>
-            <!--  Notifications Plugin    -->
-            <script src="../assets/js/plugins/bootstrap-notify.js"></script>
-            <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-            <script src="../assets/js/material-dashboard.js?v=2.1.2" type="text/javascript"></script>
-            <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-            <script src="../assets/demo/demo.js"></script>
-
+            
+           
             <script>
                 $(document).ready(function() {
                     // Javascript method's body can be found in assets/js/demos.js

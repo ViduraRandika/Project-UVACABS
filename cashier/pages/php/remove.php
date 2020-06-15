@@ -1,6 +1,6 @@
 <?php include('dbconfig.php');
 session_start();
-$id = $_GET['rc'];
+$id = $_POST['rc'];
 $sql = "SELECT * FROM login WHERE nic='$id'";
 $result = mysqli_query($db,$sql);
 
@@ -8,16 +8,18 @@ $result = mysqli_query($db,$sql);
 if(mysqli_num_rows($result)==1){
     $del = "UPDATE login SET user_type = 'removed' WHERE nic = '$id';";
     mysqli_query($db,$del);
-    header('location: ../view.php');	
+   echo 1;
+   exit;	
 }
 else{
-    $_SESSION['notfound']="NIC NOT FOUND";
-    header('location: ../view.php');	
+   // $_SESSION['notfound']="NIC NOT FOUND";
+    echo 0;
+    exit;	
 }
-if(isset($_GET['rembooking'])){
-    $rbid = $_GET['rembooking'];
+if(isset($_POST['rembooking'])){
+    $rbid = $_POST['rembooking'];
     $sql2 = mysqli_query($db,"UPDATE booking set status = 'cancelled' where bookingId = '$rbid' ");
-
+    echo 1;
 }
 
 ?>

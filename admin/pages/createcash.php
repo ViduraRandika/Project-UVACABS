@@ -1,15 +1,18 @@
 <?php 
-//permissions
-if(isset($_SESSION['user'])){
-	if($_SESSION['user']['user_type'] == "cashier"){
-		header('location: ../../cashier/index.php');
-	}
-	if($_SESSION['user']['user_type'] == "driver"){
-		header('location: ../../driver/index.php');
-    }
-    if($_SESSION['user']['user_type'] == "customer"){
-		header('location: ../../index.php');
-	}
+session_start();
+ 
+if (isset($_SESSION['user'])) {
+  if ($_SESSION['user']['user_type'] == "cashier") {
+    header('location: ../../cashier/index.php');
+  }
+  if ($_SESSION['user']['user_type'] == "driver") {
+    header('location: ../../driver/index.php');
+  }
+  if ($_SESSION['user']['user_type'] == "user") {
+    header('location: ../../index.php');
+  }
+}else{
+  header('location: ../../user/login.php');
 }
 
 include('php/createUser.php'); ?>
@@ -49,21 +52,10 @@ include('php/createUser.php'); ?>
                             <p>Dashboard</p>
                         </a>
                     </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" href="./user.php">
-                            <i class="material-icons">person</i>
-                            <p>User Profile</p>
-                        </a>
                     <li class="nav-item active">
                         <a class="nav-link" href="./create.php">
                             <i class="material-icons">content_paste</i>
                             <p>Create Account</p>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" href="./notifications.php">
-                            <i class="material-icons">notifications</i>
-                            <p>Notifications</p>
                         </a>
                     </li>
                 </ul>

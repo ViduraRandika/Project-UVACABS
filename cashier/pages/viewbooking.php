@@ -1,4 +1,21 @@
-<?php include('php/dbconfig.php'); ?>
+<?php include('php/dbconfig.php'); 
+session_start();
+ 
+if (isset($_SESSION['user'])) {
+  if ($_SESSION['user']['user_type'] == "admin") {
+    header('location: ../../admin/index.php');
+  }
+  if ($_SESSION['user']['user_type'] == "driver") {
+    header('location: ../../driver/index.php');
+  }
+  if ($_SESSION['user']['user_type'] == "user") {
+    header('location: ../../index.php');
+  }
+}else{
+  header('location: ../../user/login.php');
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,8 +40,13 @@
 <body class="">
 <!--DISPLAY ALERT BOOKING DETAILS CONFIRMED AND MESSAGES SENT-->
 <?php
-if(isset($_SESSION['sendMessagesandConfirmBooking'])){
-  echo "";
+session_start();
+if(isset($_SESSION['sendMsg'])){?>
+<script>
+  window.alert("Confirmed and Sent emails");
+</script>
+<?php
+unset($_SESSION['sendMsg']);
 }
 ?>
 
@@ -57,7 +79,12 @@ if(isset($_SESSION['sendMessagesandConfirmBooking'])){
               <p>View Booking Details</p>
             </a>
           </li>
-
+          <li class="nav-item active-pro ">
+                            <a class="nav-link" href="Cashier.php?logout='1'">
+                                <i class="material-icons">save_alt</i>
+                                <p>LOGOUT</p>
+                            </a>
+                        </li>
         </ul>
       </div>
     </div>
@@ -74,14 +101,20 @@ if(isset($_SESSION['sendMessagesandConfirmBooking'])){
           <div class="row">
             <div class="col-md-12">
               <div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title ">Booking Details</h4>
-
+                <div class="card-header card-header-primary row">
+                 
+                  <div class="col-3">
+                      
+                      <h4 class="card-title ">New Bookings</h4>
+                    </div>
+                    <div class="col">
+                      <input class="form-control" style="color: white;" onkeyup="newBookings();" id="newInput" type="search" placeholder="Search" aria-label="Search">
+                    </div>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
                     
-                    <table class="table">
+                    <table class="table" id="new">
                       <thead class=" text-primary">
 
                         <th>Booking ID</th>
@@ -118,31 +151,10 @@ if(isset($_SESSION['sendMessagesandConfirmBooking'])){
                             $payFetch = mysqli_fetch_assoc($result3);
 
                             ?>
-                            <!-- Button trigger order details modal -->
-                            <?php echo "<td><button type='button' class='btn btn-link' data-toggle='modal' data-target='#orderDetails'>" . $payFetch['paymentId']  . "</button></td>"; ?>
-                            <!-- Order details Modal -->
-                            <div class="modal fade" id="orderDetails" tabindex="-1" role="dialog" aria-labelledby="orderDetailsLongTitle" aria-hidden="true">
-                              <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLongTitle"><b>PAYMENT DETAILS</b></h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                    <?php
-                                    echo "<p>Payment Id : " . $payFetch['paymentId'] . "</p>";
-                                    echo "<p>Booking Id  : " . $payFetch['bookingId'] . "</p>";
-                                    echo "<p>Pay Date  : " . $payFetch['payDate'] . "</p>";
-                                    echo "<p>Payment  : " . $payFetch['charges'] . "</p>";
-                                    echo "<p>Payment Type  : " . $payFetch['paymentType'] . "</p>";
-                                    echo "<p>Name on Card  : " . $payFetch['nameOnCard'] . "</p>";
-                                    ?>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
+                            
+                            <?php echo "<td>" . $payFetch['paymentId']  . "</button></td>"; ?>
+                            
+                            
                             <?php
                             
                             $st = $payFetch['paymentType'];
@@ -229,13 +241,19 @@ if(isset($_SESSION['sendMessagesandConfirmBooking'])){
           <div class="row">
             <div class="col-md-12">
               <div class="card">
-                <div class="card-header card-header-primary">
-                  <h4 class="card-title ">Confirmed Bookings</h4>
+                <div class="card-header card-header-primary row">
+                  <div class="col-3">
+                      <h4 class="card-title ">Confirmed Bookings</h4>
+
+                    </div>
+                    <div class="col">
+                      <input class="form-control" style="color: white;" onkeyup="confirmedBookings();" id="confirmedInput" type="search" placeholder="Search" aria-label="Search">
+                    </div>
 
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="confirmed">
                       <thead class=" text-primary">
 
                         <th>Booking ID</th>
@@ -270,32 +288,9 @@ if(isset($_SESSION['sendMessagesandConfirmBooking'])){
                             $payFetchConf = mysqli_fetch_assoc($result3Conf);
 
                             ?>
-                            <!-- Button trigger order details modal -->
-                            <?php echo "<td><button type='button' class='btn btn-link' data-toggle='modal' data-target='#orderDetails'>" . $payFetchConf['paymentId']  . "</button></td>"; ?>
+                            
+                            <?php echo "<td>" . $payFetchConf['paymentId']  . "</td>"; ?>
 
-                            <!-- Order details Modal -->
-                            <div class="modal fade" id="orderDetails" tabindex="-1" role="dialog" aria-labelledby="orderDetailsLongTitle" aria-hidden="true">
-                              <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLongTitle"><b>PAYMENT DETAILS</b></h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                    <?php
-                                    echo "<p>Payment Id : " . $payFetchConf['paymentId'] . "</p>";
-                                    echo "<p>Booking Id  : " . $payFetchConf['bookingId'] . "</p>";
-                                    echo "<p>Pay Date  : " . $payFetchConf['payDate'] . "</p>";
-                                    echo "<p>Payment  : " . $payFetchConf['charges'] . "</p>";
-                                    echo "<p>Payment Type  : " . $payFetchConf['paymentType'] . "</p>";
-                                    echo "<p>Name on Card  : " . $payFetchConf['nameOnCard'] . "</p>";
-                                    ?>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
                             <?php
 
                             $stConf = $payFetchConf['paymentType'];
@@ -340,13 +335,19 @@ if(isset($_SESSION['sendMessagesandConfirmBooking'])){
           <div class="row">
             <div class="col-md-12">
               <div class="card">
-                <div class="card-header card-header-primary">
+                <div class="card-header card-header-primary row">
+                  
+                  <div class="col-3">
                   <h4 class="card-title ">Cancelled Bookings</h4>
 
+                    </div>
+                    <div class="col">
+                      <input class="form-control" style="color: white;" onkeyup="cancelledBookings();" id="cancelledInput" type="search" placeholder="Search" aria-label="Search">
+                    </div>
                 </div>
                 <div class="card-body">
                   <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="cancelled">
                       <thead class=" text-primary">
 
                         <th>Booking ID</th>
@@ -380,31 +381,9 @@ if(isset($_SESSION['sendMessagesandConfirmBooking'])){
                             $payFetchCancelled = mysqli_fetch_assoc($resultCancelled3);
 
                             ?>
-                            <!-- Button trigger order details modal -->
-                            <?php echo "<td><button type='button' class='btn btn-link' data-toggle='modal' data-target='#orderDetails'>" . $payFetchCancelled['paymentId'] . "</button></td>"; ?>
+                            
+                            <?php echo "<td>" . $payFetchCancelled['paymentId'] . "</td>"; ?>
 
-                            <!-- Order details Modal -->
-                            <div class="modal fade" id="orderDetails" tabindex="-1" role="dialog" aria-labelledby="orderDetailsLongTitle" aria-hidden="true">
-                              <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLongTitle"><b>PAYMENT DETAILS</b></h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                      <span aria-hidden="true">&times;</span>
-                                    </button>
-                                  </div>
-                                  <div class="modal-body">
-                                    <?php
-                                    echo "<p>Payment Id : " . $payFetchCancelled['paymentId'] . "</p>";
-                                    echo "<p>Booking Id  : " . $payFetchCancelled['bookingId'] . "</p>";
-                                    echo "<p>Pay Date  : " . $payFetchCancelled['payDate'] . "</p>";
-                                    echo "<p>Payment  : " . $payFetchCancelled['charges'] . "</p>";
-                                    echo "<p>Name on Card  : " . $payFetchCancelled['nameOnCard'] . "</p>";
-                                    ?>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
                             <?php
 
                             $stCancelled = $payFetchCancelled['paymentType'];
@@ -452,49 +431,172 @@ if(isset($_SESSION['sendMessagesandConfirmBooking'])){
   </div>
   </div>
 
+   <!-- SEARCH NEW BOOKINGS TABLE -->
+<script>
+function newBookings() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("newInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("new");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[6];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[8];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[9];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[10];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+      }
+    }  
+      }
+    }  
+      }
+    }  
+      }
+    }  
+      }
+    }       
+  }
+}
+</script>
+
+ <!-- SEARCH CONFIRMED TABLE -->
+ <script>
+function confirmedBookings() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("confirmedInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("confirmed");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[6];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[8];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[9];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[10];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }  
+      }
+    }  
+      }
+    }  
+      }
+    }  
+      }
+    }  
+      }
+    }       
+  }
+}
+</script>
+ <!-- SEARCH CANCELLED TABLE -->
+ <script>
+function cancelledBookings() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("cancelledInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("cancelled");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[1];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        td = tr[i].getElementsByTagName("td")[9];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }  
+      }
+    }  
+      }
+    }       
+  }
+}
+</script>
   <!--   Core JS Files   -->
   <script src="../assets/js/core/jquery.min.js"></script>
   <script src="../assets/js/core/popper.min.js"></script>
   <script src="../assets/js/core/bootstrap-material-design.min.js"></script>
   <script src="../assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
-  <!-- Plugin for the momentJs  -->
-  <script src="../assets/js/plugins/moment.min.js"></script>
-  <!--  Plugin for Sweet Alert -->
-  <script src="../assets/js/plugins/sweetalert2.js"></script>
-  <!-- Forms Validations Plugin -->
-  <script src="../assets/js/plugins/jquery.validate.min.js"></script>
-  <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
-  <script src="../assets/js/plugins/jquery.bootstrap-wizard.js"></script>
-  <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
-  <script src="../assets/js/plugins/bootstrap-selectpicker.js"></script>
-  <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
-  <script src="../assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
-  <!--  DataTables.net Plugin, full documentation here: https://datatables.net/  -->
-  <script src="../assets/js/plugins/jquery.dataTables.min.js"></script>
-  <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
-  <script src="../assets/js/plugins/bootstrap-tagsinput.js"></script>
-  <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
-  <script src="../assets/js/plugins/jasny-bootstrap.min.js"></script>
-  <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
-  <script src="../assets/js/plugins/fullcalendar.min.js"></script>
-  <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
-  <script src="../assets/js/plugins/jquery-jvectormap.js"></script>
-  <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
-  <script src="../assets/js/plugins/nouislider.min.js"></script>
-  <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
-  <!-- Library for adding dinamically elements -->
-  <script src="../assets/js/plugins/arrive.min.js"></script>
-  <!--  Google Maps Plugin    -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
-  <!-- Chartist JS -->
-  <script src="../assets/js/plugins/chartist.min.js"></script>
-  <!--  Notifications Plugin    -->
-  <script src="../assets/js/plugins/bootstrap-notify.js"></script>
-  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="../assets/js/material-dashboard.js?v=2.1.2" type="text/javascript"></script>
-  <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-  <script src="../assets/demo/demo.js"></script>
+
 </body>
 
 </html>

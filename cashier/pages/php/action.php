@@ -12,7 +12,7 @@ if(isset($_POST['confirmBID'])){
    $sql1 = mysqli_query($db,"UPDATE booking SET status = 'notcompleted', vehicleNo = '$vehicle', driverNic = '$driver' WHERE bookingId = '$bId'");
 
    /////////BOOKING DETAILS///////
-   $sql2 = mysqli_fetch_assoc(mysqli_query($db,"SELECT * FROM booking WHERE bookingId = '$bid'"));
+   $sql2 = mysqli_fetch_assoc(mysqli_query($db,"SELECT * FROM booking WHERE bookingId = '$bId'"));
    $org = $sql2['origin'];
    $dest = $sql2['destination'];
    $date = $sql2['tourDate'];
@@ -29,7 +29,7 @@ if(isset($_POST['confirmBID'])){
    $cAddress = $sql3['customerAddress'];
 
    //////PAYMENT DETAILS////////
-   $sql4 = mysqli_fetch_assoc(mysqli_query($db,"SELECT * FROM onlinepayment WHERE bookingId = '$bid'"));
+   $sql4 = mysqli_fetch_assoc(mysqli_query($db,"SELECT * FROM onlinepayment WHERE bookingId = '$bId'"));
    $pId = $sql4['paymentId'];
    $cNo = $sql4['cardNo'];
    $pt = $sql4['paymentType'];
@@ -57,8 +57,9 @@ if(isset($_POST['confirmBID'])){
    $drConNo = $sql7['driverContactNo'];
 
    ////////////////////////////////FUNCTIONS CALLING/////////////////////////////////////////////
-   sendemailtocustomer($cEmail,$org,$dest,$date,$time,$vehType,$vno,$drName,$drConNo,$bId,$pId,$cNo,$pt,$tot,$ch,$nePay);
-   sendemailtoDriver($dEmail,$org,$dest,$date,$time,$vehType,$vno,$bId,$nePay,$cName,$cPno,$cAddress);
+   echo $cEmail.'<br>'.$org.'<br>'.$dest.'<br>'.$date.'<br>'.$time.'<br>'.$vehType.'<br>'.$vno.'<br>'.$drName.'<br>'.$drConNo.'<br>'.$bId.'<br>'.$pId.'<br>'.$cNo.'<br>'.$pt.'<br>'.$tot.'<br>'.$ch.'<br>'.$nePay;
+//    sendemailtocustomer($cEmail,$org,$dest,$date,$time,$vehType,$vno,$drName,$drConNo,$bId,$pId,$cNo,$pt,$tot,$ch,$nePay);
+//    sendemailtoDriver($dEmail,$org,$dest,$date,$time,$vehType,$vno,$bId,$nePay,$cName,$cPno,$cAddress);
 
 
     ////////////////////////////////////SEND EMAIL TO CUSTOMER////////////////////////////////////////////
@@ -75,7 +76,7 @@ if(isset($_POST['confirmBID'])){
       'to' => array(
         $cusEmail,
       ),
-      'category' => 'Booking Details (Customer)'
+      'category' => 'Booking Confirmed (Customer)'
     );
     
     
@@ -84,7 +85,7 @@ if(isset($_POST['confirmBID'])){
         'api_key'   => $pass,
         'x-smtpapi' => json_encode($json_string),
         'to'        => $cusEmail,
-        'subject'   => 'Booking Success',
+        'subject'   => 'Booking Confirmed',
         'html'      => "
  
  <!DOCTYPE html>
@@ -931,7 +932,11 @@ if(isset($_POST['confirmBID'])){
     
  
  }
- $_SESSION['sendMessagesandConfirmBooking'] = "SENT";
+
+ sendemailtocustomer($cEmail,$org,$dest,$date,$time,$vehType,$vno,$drName,$drConNo,$bId,$pId,$cNo,$pt,$tot,$ch,$nePay);
+ sendemailtoDriver($dEmail,$org,$dest,$date,$time,$vehType,$vno,$bId,$nePay,$cName,$cPno,$cAddress);
+session_start();
+ $_SESSION['sendMsg'] = "SENT";
  header('location: ../viewbooking.php');
  
  }

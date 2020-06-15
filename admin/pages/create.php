@@ -1,18 +1,20 @@
 <?php
 
-//permissions
-if (isset($_SESSION['user'])) {
-  if ($_SESSION['user']['user_type'] == "cashier") {
-    header('location: ../../cashier/index.php');
+session_start();
+ 
+  if (isset($_SESSION['user'])) {
+    if ($_SESSION['user']['user_type'] == "cashier") {
+      header('location: ../../cashier/index.php');
+    }
+    if ($_SESSION['user']['user_type'] == "driver") {
+      header('location: ../../driver/index.php');
+    }
+    if ($_SESSION['user']['user_type'] == "user") {
+      header('location: ../../index.php');
+    }
+  }else{
+    header('location: ../../user/login.php');
   }
-  if ($_SESSION['user']['user_type'] == "driver") {
-    header('location: ../../driver/index.php');
-  }
-  if ($_SESSION['user']['user_type'] == "customer") {
-    header('location: ../../index.php');
-  }
-}
-
 
 if (isset($_SESSION['success'])) {
   echo "<h5>Success</h5>";
@@ -71,23 +73,7 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
 
             <a class="nav-link" href="" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="material-icons">person</i>
-              <p>Create Accounts</p>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="createcus.php">Add Customer</a>
-              <a class="dropdown-item" href="createdriv.php">Add Driver</a>
-              <a class="dropdown-item" href="createcash.php">Add Cashier</a>
-
-            </div>
-          </li>
-
-
-          </li>
-          </li>
-          <li class="nav-item ">
-            <a class="nav-link" href="./notifications.php">
-              <i class="material-icons">notifications</i>
-              <p>Notifications</p>
+              <p>Manage Accounts</p>
             </a>
           </li>
         </ul>
@@ -114,7 +100,7 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
                       <input class="form-control" style="color: white;"  id="customerInput" style="color:white;" onkeyup="customerSearch();" type="search" placeholder="Search" aria-label="Search">
                     </div>
                     <div class="col-3">
-                      <button style="margin-left:50px;" class="btn btn-light my-2 my-sm-0" type="submit">ADD A CUSTOMER</button>
+                      <button style="margin-left:50px;" class="btn btn-light my-2 my-sm-0" onclick="window.location.href='createcus.php';" >ADD A CUSTOMER</button>
                     </div>
                   </div>
                 </div>
@@ -146,7 +132,7 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
                             <?php echo "<td>" . $row['customerContactNo'] . "</td>"; ?>
                             <?php echo "<td>" . $row['customerRegDate'] . "</td>"; ?>
                             <?php echo "<td>" . $row['points'] . "</td>"; ?>
-                            <?php echo "<td><a href=php/remove.php?rc=$id>Remove</a></td>" ?>
+                            <?php echo "<td><button class='btn btn-danger customerdelete' id='del_$id' data-id='$id' value=''>REMOVE</button></td>" ?>
                             <?php echo "</tr>"; ?>
                           <?php endwhile ?>
                         </tbody>
@@ -173,7 +159,7 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
                       <input class="form-control" style="color: white;"  id="driverInput" onkeyup="driverSearch();" type="search" placeholder="Search" aria-label="Search">
                     </div>
                     <div class="col-3">
-                      <button style="margin-left:50px;" class="btn btn-light my-2 my-sm-0" type="submit">ADD A CUSTOMER</button>
+                      <button style="margin-left:50px;" class="btn btn-light my-2 my-sm-0" onclick="window.location.href='createdriv.php';">ADD A DRIVER</button>
                     </div>
                   </div>
                 </div>
@@ -199,7 +185,7 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
                             <?php echo "<td>" . $row['driverLname'] . "</td>"; ?>
                             <?php echo "<td>" . $row['driverAddress'] . "</td>"; ?>
                             <?php echo "<td>" . $row['driverEmail'] . "</td>"; ?>
-                            <?php echo "<td><a href=php/remove.php?rc=$id>Remove</a></td>" ?>
+                            <?php echo "<td><button class='btn btn-danger customerdelete' id='del_$id' data-id='$id' value=''>REMOVE</button></td>" ?>
                             <?php echo "</tr>"; ?>
                           <?php endwhile ?>
                         </tbody>
@@ -226,7 +212,7 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
                       <input class="form-control" onkeyup="cashierSearch();" id="cashierInput" type="search" placeholder="Search" aria-label="Search">
                     </div>
                     <div class="col-3">
-                      <button style="margin-left:50px;" class="btn btn-light my-2 my-sm-0" type="submit">ADD A CUSTOMER</button>
+                      <button style="margin-left:50px;" class="btn btn-light my-2 my-sm-0" onclick="window.location.href='createcash.php';">ADD A CASHIER</button>
                     </div>
                   </div>
                 </div>
@@ -250,7 +236,7 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
                             <?php echo "<td>" . $row['cashierName'] . "</td>"; ?>
                             <?php echo "<td>" . $row['cashierAddress'] . "</td>"; ?>
                             <?php echo "<td>" . $row['cashierContactNo'] . "</td>"; ?>
-                            <?php echo "<td><a href=php/remove.php?rc=$id>Remove</a></td>" ?>
+                            <?php echo "<td><button class='btn btn-danger customerdelete' id='del_$id' data-id='$id' value=''>REMOVE</button></td>" ?>
                             <?php echo "</tr>"; ?>
                           <?php endwhile ?>
                         </tbody>
@@ -307,7 +293,7 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
                               echo "<td>" . $r['customerFname'] . "</td>";
                               echo "<td>" . $r['customerLname'] . "</td>";
                               echo "<td>Customer</td>";
-                              echo "<td><a href=php/add.php?au=$id>Add</a></td>";
+                              echo "<td><button class='btn btn-success adduser' id='del_$id' data-id='$id' value=''>ADD</button></td>";
                             }
                             if (mysqli_num_rows($re2) == 1) {
                               $r = mysqli_fetch_assoc($re2);
@@ -315,7 +301,7 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
                               echo "<td>" . $r['driverFname'] . "</td>";
                               echo "<td>" . $r['driverLname'] . "</td>";
                               echo "<td>Driver</td>";
-                              echo "<td><a href=php/add.php?ad=$id>Add</a></td>";
+                              echo "<td><button class='btn btn-success adddriver' id='del_$id' data-id='$id' value=''>ADD</button></td>";
                             }
                             if (mysqli_num_rows($re3) == 1) {
                               $r = mysqli_fetch_assoc($re3);
@@ -323,7 +309,7 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
                               echo "<td>" . $r['cashierName'] . "</td>";
                               echo "<td></td>";
                               echo "<td>Cashier</td>";
-                              echo "<td><a href=php/add.php?ac=$id>Add</a></td>";
+                              echo "<td><button class='btn btn-success addcashier' id='del_$id' data-id='$id' value=''>ADD</button></td>";
                             }
 
                             ?>
@@ -343,6 +329,8 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
     </div>
   </div>
 
+  
+  
 
   <!-- SEARCH CUSTOMER TABLE -->
 <script>
@@ -530,51 +518,185 @@ function removedUsers() {
 </script>
 
 
-  <!--   Core JS Files   -->
-  <script src="../assets/js/core/jquery.min.js"></script>
-  <script src="../assets/js/core/popper.min.js"></script>
-  <script src="../assets/js/core/bootstrap-material-design.min.js"></script>
-  <script src="../assets/js/plugins/perfect-scrollbar.jquery.min.js"></script>
-  <!-- Plugin for the momentJs  -->
-  <script src="../assets/js/plugins/moment.min.js"></script>
-  <!--  Plugin for Sweet Alert -->
-  <script src="../assets/js/plugins/sweetalert2.js"></script>
-  <!-- Forms Validations Plugin -->
-  <script src="../assets/js/plugins/jquery.validate.min.js"></script>
-  <!-- Plugin for the Wizard, full documentation here: https://github.com/VinceG/twitter-bootstrap-wizard -->
-  <script src="../assets/js/plugins/jquery.bootstrap-wizard.js"></script>
-  <!--	Plugin for Select, full documentation here: http://silviomoreto.github.io/bootstrap-select -->
-  <script src="../assets/js/plugins/bootstrap-selectpicker.js"></script>
-  <!--  Plugin for the DateTimePicker, full documentation here: https://eonasdan.github.io/bootstrap-datetimepicker/ -->
-  <script src="../assets/js/plugins/bootstrap-datetimepicker.min.js"></script>
-  <!--  DataTables.net Plugin, full documentation here: https://datatables.net/  -->
-  <script src="../assets/js/plugins/jquery.dataTables.min.js"></script>
-  <!--	Plugin for Tags, full documentation here: https://github.com/bootstrap-tagsinput/bootstrap-tagsinputs  -->
-  <script src="../assets/js/plugins/bootstrap-tagsinput.js"></script>
-  <!-- Plugin for Fileupload, full documentation here: http://www.jasny.net/bootstrap/javascript/#fileinput -->
-  <script src="../assets/js/plugins/jasny-bootstrap.min.js"></script>
-  <!--  Full Calendar Plugin, full documentation here: https://github.com/fullcalendar/fullcalendar    -->
-  <script src="../assets/js/plugins/fullcalendar.min.js"></script>
-  <!-- Vector Map plugin, full documentation here: http://jvectormap.com/documentation/ -->
-  <script src="../assets/js/plugins/jquery-jvectormap.js"></script>
-  <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
-  <script src="../assets/js/plugins/nouislider.min.js"></script>
-  <!-- Include a polyfill for ES6 Promises (optional) for IE11, UC Browser and Android browser support SweetAlert -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
-  <!-- Library for adding dinamically elements -->
-  <script src="../assets/js/plugins/arrive.min.js"></script>
-  <!--  Google Maps Plugin    -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
-  <!-- Chartist JS -->
-  <script src="../assets/js/plugins/chartist.min.js"></script>
-  <!--  Notifications Plugin    -->
-  <script src="../assets/js/plugins/bootstrap-notify.js"></script>
-  <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="../assets/js/material-dashboard.js?v=2.1.2" type="text/javascript"></script>
-  <!-- Material Dashboard DEMO methods, don't include it in your project! -->
-  <script src="../assets/demo/demo.js"></script>
 
-  <script src="a.js"> </script>
+ 
+
+ 
+<script src="../assets/js/core/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.js"></script>  <!-- REMOVE CUSTOMER  -->
+  <!--   Core JS Files   -->
+  
+  <script src="../assets/js/core/bootstrap-material-design.min.js"></script>
+<script>
+ 
+ $(document).ready(function(){
+ 
+ // Delete 
+ $('.customerdelete').click(function(){
+   var el = this;
+ 
+   // Delete id
+   var deleteid = $(this).data('id');
+ 
+   // Confirm box
+   bootbox.confirm("Do you really want to delete record? ", function(result) {
+ 
+      if(result){
+        // AJAX Request
+        $.ajax({
+          url: 'php/remove.php',
+          type: 'POST',
+          data: { rc:deleteid },
+          success: function(response){
+ 
+            // Removing row from HTML Table
+            if(response == 1){
+       $(el).closest('tr').css('background','tomato');
+               $(el).closest('tr').fadeOut(800,function(){
+          $(this).remove();
+       });
+        }else{
+       window.alert('Record not deleted.');
+        }
+ 
+          }
+        });
+      }
+ 
+   });
+ 
+ });
+ });
+ 
+ </script>
+
+<script>
+ 
+ $(document).ready(function(){
+ 
+ // ADD 
+ $('.adduser').click(function(){
+   var el = this;
+ 
+   // ADD id
+   var deleteid = $(this).data('id');
+ 
+   // Confirm box
+   bootbox.confirm("Do you really want to add this record? ", function(result) {
+ 
+      if(result){
+        // AJAX Request
+        $.ajax({
+          url: 'php/add.php',
+          type: 'POST',
+          data: { au:deleteid },
+          success: function(response){
+ 
+            // Removing row from HTML Table
+            if(response == 1){
+       $(el).closest('tr').css('background','tomato');
+               $(el).closest('tr').fadeOut(800,function(){
+          $(this).remove();
+       });
+        }else{
+       window.alert('Record not Added.');
+        }
+ 
+          }
+        });
+      }
+ 
+   });
+ 
+ });
+ });
+ 
+ </script>
+ <script>
+ 
+ $(document).ready(function(){
+ 
+ // add
+ $('.adddriver').click(function(){
+   var el = this;
+ 
+   // add id
+   var deleteid = $(this).data('id');
+ 
+   // Confirm box
+   bootbox.confirm("Do you really want to add this record? ", function(result) {
+ 
+      if(result){
+        // AJAX Request
+        $.ajax({
+          url: 'php/add.php',
+          type: 'POST',
+          data: { ad:deleteid },
+          success: function(response){
+ 
+            // Removing row from HTML Table
+            if(response == 1){
+       $(el).closest('tr').css('background','tomato');
+               $(el).closest('tr').fadeOut(800,function(){
+          $(this).remove();
+       });
+        }else{
+       window.alert('Record not added.');
+        }
+ 
+          }
+        });
+      }
+ 
+   });
+ 
+ });
+ });
+ 
+ </script>
+ <script>
+ 
+ $(document).ready(function(){
+ 
+ // add
+ $('.addcashier').click(function(){
+   var el = this;
+ 
+   // add id
+   var deleteid = $(this).data('id');
+ 
+   // Confirm box
+   bootbox.confirm("Do you really want to add this record? ", function(result) {
+ 
+      if(result){
+        // AJAX Request
+        $.ajax({
+          url: 'php/add.php',
+          type: 'POST',
+          data: { ac:deleteid },
+          success: function(response){
+ 
+            // Removing row from HTML Table
+            if(response == 1){
+       $(el).closest('tr').css('background','tomato');
+               $(el).closest('tr').fadeOut(800,function(){
+          $(this).remove();
+       });
+        }else{
+       window.alert('Record not added.');
+        }
+ 
+          }
+        });
+      }
+ 
+   });
+ 
+ });
+ });
+ 
+ </script>
+  
 </body>
 
 </html>

@@ -1,7 +1,7 @@
 <?php include('dbconfig.php');
-session_start();
-if(isset($_GET['au'])){
-$id = $_GET['au'];
+//session_start();
+if(isset($_POST['au'])){
+$id = $_POST['au'];
 $sql = "SELECT * FROM login WHERE nic='$id'";
 
 $result = mysqli_query($db,$sql);
@@ -10,16 +10,17 @@ $result = mysqli_query($db,$sql);
 if(mysqli_num_rows($result)==1){
     $del = "UPDATE login SET user_type = 'user' WHERE nic = '$id';";
     mysqli_query($db,$del);
-    header('location: ../view.php');	
+    echo 1;
+    exit;	
 }
 else{
-    $_SESSION['notfound']="NIC NOT FOUND";
-    header('location: ../view.php');	
+    echo 0;
+    exit;
 }
 }
 
-if(isset($_GET['ad'])){
-    $id = $_GET['ad'];
+if(isset($_POST['ad'])){
+    $id = $_POST['ad'];
     $sql = "SELECT * FROM login WHERE nic='$id'";
     $result = mysqli_query($db,$sql);
     
@@ -27,11 +28,12 @@ if(isset($_GET['ad'])){
     if(mysqli_num_rows($result)==1){
         $del = "UPDATE login SET user_type = 'driver' WHERE nic = '$id';";
         mysqli_query($db,$del);
-        header('location: ../view.php');	
+        echo 1;
+        exit;	
     }
     else{
-        $_SESSION['notfound']="NIC NOT FOUND";
-        header('location: ../view.php');	
+        echo 0;
+        exit;
     }
 }
 
