@@ -129,12 +129,9 @@ unset($_SESSION['sendMsg']);
                         <th>Origin</th>
                         <th>Destination</th>
                         <th>Vehicle Type</th>
-                        <th>Vehicle Number</th>
                         <th>Tour Time</th>
                         <th>Tour Date</th>
-                        <th>Driver NIC</th>
                         <th>Customer NIC</th>
-                        <th>Confirm</th>
                       </thead>
                       <?php
                       $sql1 = "SELECT * FROM booking where status != 'completed' and status!='notcompleted' and status !='cancelled'";
@@ -191,17 +188,7 @@ unset($_SESSION['sendMsg']);
 
                             if ($resVehicles = mysqli_query($db, $vehicles)) : ?>
 
-                              <?php echo "<td>"; ?>
-                              <?php echo "<select required name='selVehicle' class='form-control' id='exampleFormControlSelect1'>"; ?>
-                              <?php echo "<option value=''>--SELECT VEHICLE--</option>" ?>
-                              <?php while ($rowVeh = mysqli_fetch_array($resVehicles)) : ?>
-                                <?php echo "<option>" . $rowVeh['vehicleNo'] . "</option>";
-
-                                echo  $td;
-                                ?>
-                              <?php endwhile ?>
-                              <?php echo "</select>"; ?>
-                              <?php echo "</td>"; ?>
+                              
                             <?php endif ?>
 
 
@@ -212,21 +199,14 @@ unset($_SESSION['sendMsg']);
                             $sqlDriverNic = "SELECT driver.driverNic FROM driver WHERE driver.driverNic NOT IN (SELECT booking.driverNic FROM booking where STATUS = 'notcompleted' AND booking.tourDate = '$td' )";
                             $sql4 = mysqli_query($db, $sqlDriverNic);
                             ?>
-                            <?php echo "<select required name='selDriver' class='form-control' id='exampleFormControlSelect1'>"; ?>
-                            <?php echo "<option value=''>--SELECT DRIVER--</option>" ?>
-                            <?php while ($resDriverNic = mysqli_fetch_assoc($sql4)) : ?>
-                              <?php echo "<option>" . $resDriverNic['driverNic'] . "</option>" ?>
-                            <?php endwhile ?>
-                            <?php echo "</select>"; ?>
+                            
                             <?php echo "</td>"; ?>
 
                             <?php echo "<td>" . $row1['customerNic'] . "</td>"; ?>
                             <?php echo "<input type='hidden' name = 'confirmBID' value ='".$row1['bookingId']."' readonly>";?>
-                            <?php echo "<td><button type='submit'>Confirm</button></td>" ?>
+                            
                             <?php echo "</form>"?>
-                            <?php
-                            $rbId = $row1['bookingId'];
-                            echo "<td><a href=php/remove.php?rembooking=$rbId>Remove</a></td>" ?>
+                            
                             <?php echo "</tr>"; ?>
                             
                           <?php endwhile ?>
