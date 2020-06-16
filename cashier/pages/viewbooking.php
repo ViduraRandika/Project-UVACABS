@@ -40,7 +40,7 @@ if (isset($_SESSION['user'])) {
 <body class="">
 <!--DISPLAY ALERT BOOKING DETAILS CONFIRMED AND MESSAGES SENT-->
 <?php
-session_start();
+
 if(isset($_SESSION['sendMsg'])){?>
 <script>
   window.alert("Confirmed and Sent emails");
@@ -79,8 +79,14 @@ unset($_SESSION['sendMsg']);
               <p>View Booking Details</p>
             </a>
           </li>
+          <li class="nav-item">
+                        <a class="nav-link" href="./vehicle.php">
+                            <i class="material-icons">local_taxi</i>
+                            <p>Vehicles</p>
+                        </a>
+                    </li>
           <li class="nav-item active-pro ">
-                            <a class="nav-link" href="Cashier.php?logout='1'">
+                            <a class="nav-link" href="php/function.php?logout='1'">
                                 <i class="material-icons">save_alt</i>
                                 <p>LOGOUT</p>
                             </a>
@@ -218,9 +224,7 @@ unset($_SESSION['sendMsg']);
                             <?php echo "<input type='hidden' name = 'confirmBID' value ='".$row1['bookingId']."' readonly>";?>
                             <?php echo "<td><button type='submit'>Confirm</button></td>" ?>
                             <?php echo "</form>"?>
-                            <?php
-                            $rbId = $row1['bookingId'];
-                            echo "<td><a href=php/remove.php?rembooking=$rbId>Remove</a></td>" ?>
+                            
                             <?php echo "</tr>"; ?>
                             
                           <?php endwhile ?>

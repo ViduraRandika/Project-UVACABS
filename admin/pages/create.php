@@ -16,10 +16,7 @@ session_start();
     header('location: ../../user/login.php');
   }
 
-if (isset($_SESSION['success'])) {
-  echo "<h5>Success</h5>";
-  unset($_SESSION['success']);
-}
+
 ?>
 <?php include('../../php/dbconfig.php');
 $sql1 = "SELECT * FROM customer INNER JOIN login ON customer.customerNic = login.nic WHERE login.user_type != 'removed'";
@@ -76,6 +73,25 @@ $sql3 = "SELECT * FROM cashier INNER JOIN login ON cashier.cashierNic = login.ni
               <p>Manage Accounts</p>
             </a>
           </li>
+          <li class="nav-item ">
+            <a class="nav-link" href="viewbooking.php">
+              <i class="material-icons">unarchive</i>
+              <p>View Booking Details</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="vehicle.php">
+              <i class="material-icons">local_taxi</i>
+              <p>Vehicles</p>
+            </a>
+          </li>
+
+          <li class="nav-item active-pro ">
+                            <a class="nav-link" href="php/function.php?logout='1'">
+                                <i class="material-icons">save_alt</i>
+                                <p>LOGOUT</p>
+                            </a>
+                        </li>
         </ul>
       </div>
     </div>

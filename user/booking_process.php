@@ -15,7 +15,7 @@ $nameOnCard = $_POST['card_holder_name'];
 $cardNo = $_POST['card_no'];
 $custom_1 = $_POST['custom_1'];
 $currentPoints = $_POST['custom_2'];
-$str_arr = explode (",", $custom_1);  
+$str_arr = explode ("#", $custom_1);  
 
 $merchant_secret = "4pAuBRcs5Cg4Evedqw80eK48aUtYKw5I18X58xsHTXNa";
 $local_md5sig = strtoupper (md5 ( $merchant_id . $order_id . $charges . $payhere_currency . $status_code . strtoupper(md5($merchant_secret)) ) );

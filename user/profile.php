@@ -250,15 +250,16 @@ function profile_edit()
                                                         }
                                                         ?>
                                                         <?php echo "<td>" . $charges . "</td>"; ?>
-                                                        <?php $sqlPoints = mysqli_fetch_assoc(mysqli_query($db, "SELECT points FROM customer where customerNic = '$n'"));
-                                                        $points = $sqlPoints['points'];
-                                                        ?>
+                                                        
                                                         <?php echo "</tr>"; ?>
                                                     <?php endwhile ?>
                                                 </tbody>
                                                 <?php mysqli_free_result($result); ?>
                                             <?php endif ?>
                                         </table>
+                                        <?php $sqlPoints = mysqli_fetch_assoc(mysqli_query($db, "SELECT points FROM customer where customerNic = '$n'"));
+                                                        $points = $sqlPoints['points'];
+                                                        ?>
                                         <h5 style="color: red;">Total points earned : <?php echo $points;?></h5>
                                         
                                     </div>

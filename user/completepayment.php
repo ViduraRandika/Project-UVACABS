@@ -19,6 +19,6 @@ $amount = $_POST['custom_1'];
 $merchant_secret = "4pAuBRcs5Cg4Evedqw80eK48aUtYKw5I18X58xsHTXNa";
 $local_md5sig = strtoupper (md5 ( $merchant_id . $order_id . $charges . $payhere_currency . $status_code . strtoupper(md5($merchant_secret)) ) );
 if (($local_md5sig === $md5sig) AND ($status_code == 2) ){
-    mysqli_query($db,"UPDATE onlinepayment SET charges='$amount' WHERE bookingId='$bookingId'");
+    mysqli_query($db,"UPDATE onlinepayment SET charges='$amount',paymentType='full' WHERE bookingId='$bookingId'");
 }
 ?>

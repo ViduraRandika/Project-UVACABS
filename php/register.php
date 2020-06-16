@@ -222,7 +222,7 @@ function login()
 
 				$_SESSION['user_data'] = $sqluser;
 				$_SESSION['success']  = "You are now logged in";
-				header('location: ../driver/home.php');
+				header('location: ../driver/index.php');
 			} elseif ($logged_in_user['user_type'] == 'cashier') {
 
 				$_SESSION['user'] = $logged_in_user;

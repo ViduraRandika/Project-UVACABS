@@ -1,6 +1,6 @@
 <?php 
 include('php/dbconfig.php');
-include('../../php/register.php');
+
 
 
 session_start();
@@ -67,8 +67,14 @@ session_start();
                                 <p>View Booking Details</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                        <a class="nav-link" href="./vehicle.php">
+                            <i class="material-icons">local_taxi</i>
+                            <p>Vehicles</p>
+                        </a>
+                    </li>
                         <li class="nav-item active-pro ">
-                            <a class="nav-link" href="Cashier.php?logout='1'">
+                            <a class="nav-link" href="php/function.php?logout='1'">
                                 <i class="material-icons">save_alt</i>
                                 <p>LOGOUT</p>
                             </a>

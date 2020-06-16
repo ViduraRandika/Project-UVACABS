@@ -102,7 +102,7 @@ if(isset($_POST['paymentmethod'])){
     </style>
 </head>
 
-<body onload="success(); totalCharge();     calcRoute();" onchange="calcRoute();" onmousemove="calcRoute();" ontouchstart="calcRoute();success();" ontouchend="calcRoute();success();">>
+<body onload="success(); totalCharge(); calcRoute();" onchange="calcRoute();" onmousemove="calcRoute();totalCharge();success();" ontouchstart="calcRoute();success();" ontouchend="calcRoute();success();">>
 
     <?php include('navigation.php'); ?>
     <div class="container top">
@@ -180,18 +180,29 @@ if(isset($_POST['paymentmethod'])){
                     <div class="form-group">
                         <label class=" control-label"><b> Vehicle Type*</b></label>
                         <div class="">
-                            <select name="vehicle" id="selectVehicle" class="form-control" onchange="totalCharge();success();">
-                                <option value="">--SELECT VEHICLE TYPE--</option>
-                                <?php if ($bc_1 < $vc_1) { ?>
+                            <select name="vehicle" id="selectVehicle"  class="form-control" onchange="totalCharge();submitform();" onchange="success();" onload="totalCharge();">
+                            <?php if($vehicle=="Car"){?>
+                                <option value="Car">Car</option>
+                            <?php }elseif($vehicle=="Van(Non AC)"){?>
+                                <option value="Van(Non AC)">Van (Non AC)</option>
+                            <?php }elseif($vehicle=="Van(AC)"){?>
+                                <option value="Van(AC)">Van (AC)</option>
+                            <?php }else{?>
+                                
+                            <option value="">--SELECT VEHICLE TYPE--</option>
+                            <?php }?>
+                                
+                                <?php if (($bc_1 < $vc_1)&&($vehicle !="Car")) { ?>
                                     <option value="Car">Car</option>
                                 <?php }
-                                if ($bc_2 < $vc_2) { ?>
+                                if (($bc_2 < $vc_2)&&($vehicle !="Van(Non AC)")) { ?>
                                     <option value="Van(Non AC)">Van (Non AC)</option>
                                 <?php }
-                                if ($bc_3 < $vc_3) { ?>
+                                if (($bc_3 < $vc_3)&&($vehicle !="Van(AC)")) { ?>
                                     <option value="Van(AC)">Van (AC)</option>
                                 <?php } ?>
                             </select>
+                            <input type="hidden" id="selectVehicle2" value='<?php echo $vehicle;?>'>
                         </div>
                     </div>
                 </div>
@@ -201,7 +212,7 @@ if(isset($_POST['paymentmethod'])){
                 <label class="col-md control-label "><b>Total Charge</b></label>
                 <div class="input-group col-md-8">
                     <input name="total" class="form-control input-md" id="total" readonly value="<?php echo "$totalCharge"; ?>">
-                    <input name= "pointsBalance" id='pointsbal'  value="<?php echo $pointsBalance; ?> hidden">
+                    <input hidden name= "pointsBalance" id='pointsbal'  value="<?php echo $pointsBalance; ?>">
                     <div class="input-group-append">
                         <span class="input-group-text">LKR</span>
                     </div>
@@ -214,10 +225,23 @@ if(isset($_POST['paymentmethod'])){
                 <div class="form-group">
                     <label class=" control-label"><b> Payment Type*</b><p>  - If you paying full payment at once and if you have enough points in account you can use them. </p></label>
                     <div class="">
-                        <select name="paymentmethod" id="payment_method" class="form-control" onchange="totalCharge()" onloadeddata="totalCharge()">
+                        <select name="paymentmethod" id="payment_method" class="form-control" onchange="totalCharge();submitform();" onloadeddata="totalCharge();" onmousemove="totalCharge();">
+                           
+                        <?php if($paymentType=="advanced"){?>
                             <option value="advanced">Advanced Payment</option>
                             <option value="full">Full Payment</option>
+                        <?php }
+                         elseif($paymentType=="full"){?>
+                         <option value="full">Full Payment</option>
+                            <option value="advanced">Advanced Payment</option>
+                            
+                        <?php }else{?>
+                            <option value="advanced">Advanced Payment</option>
+                            <option value="full">Full Payment</option>
+                        <?php } ?>
+                        
                         </select>
+                        <input type="hidden" id="payment_method2" value='<?php echo $paymentType;?>'>
                     </div>
                 </div>
             </div>
@@ -283,7 +307,7 @@ if(isset($_POST['paymentmethod'])){
             <input type="hidden" name="address" value="<?php echo $_SESSION['user_data']['customerAddress']; ?>">
             <input type="hidden" name="city" value="Badulla">
             <input type="hidden" name="country" value="Sri Lanka">
-            <input type="hidden" name="custom_1" value="<?php echo $origin.",".$destination.",".$vehicle.",".$time.",".$date1.",". $_SESSION['user_data']['customerNic'].",".$paymentType ; ?>"><br><br>
+            <input type="hidden" name="custom_1" value="<?php echo $origin."#".$destination."#".$vehicle."#".$time."#".$date1."#". $_SESSION['user_data']['customerNic']."#".$paymentType ; ?>"><br><br>
             <input type="hidden" name="custom_2" value="<?php echo $pointsBalance; ?>">
 
 
@@ -356,7 +380,7 @@ function calcRoute(){
 </script>
     <script>
         function success() {
-            if ((document.getElementById("location-1").value === "") || (document.getElementById("location-2").value === "") || (document.getElementById("dist").value === "") || (document.getElementById("datecheck").value === "") || (document.getElementById("selectVehicle").value === "")||(document.getElementById("timepicker").value === "")) {
+            if ((document.getElementById("location-1").value === "") || (document.getElementById("location-2").value === "") || (document.getElementById("dist").value === "") || (document.getElementById("datecheck").value === "") || (document.getElementById("selectVehicle2").value === "")||(document.getElementById("payment_method2").value === "")||(document.getElementById("timepicker").value === "")) {
                 document.getElementById('button').disabled = true;
             } else {
                 document.getElementById('button').disabled = false;
@@ -384,8 +408,8 @@ function calcRoute(){
             //Get a reference to the form id="calCharges"
             var formCal = document.forms["calCharges"];
             //Get a reference to the select id="selectVehicle"
-            var selectedVehicle = formCal.elements["selectVehicle"];
-            var selectedMethod = formCal.elements["payment_method"];
+            var selectedVehicle = formCal.elements["selectVehicle2"];
+            var selectedMethod = formCal.elements["payment_method2"];
             vehicleRate = vehicle_rates[selectedVehicle.value];
 
             //return selected vehicle rate - per 1km
@@ -395,6 +419,7 @@ function calcRoute(){
             distance = (1) * dist.value;
             var tot = (distance * vehicleRate);
             var totalCharge = tot.toFixed(2);
+            document.getElementById('total').value = totalCharge;
             var x = document.getElementById("hide");
             if(totalCharge>100 && selectedMethod.value == "full"){
                 x.style.display = "block";

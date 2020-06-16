@@ -1,6 +1,8 @@
 <?php 
 session_start();
- 
+ if(isset($_SESSION['success'])){
+   unset($_SESSION['success']);
+ }
 if (isset($_SESSION['user'])) {
   if ($_SESSION['user']['user_type'] == "cashier") {
     header('location: ../../cashier/index.php');
@@ -96,14 +98,27 @@ if (isset($_SESSION['user'])) {
           <li class="nav-item ">
             <a class="nav-link" href="./create.php">
               <i class="material-icons">person</i>
-              <p>Create Account</p>
-            </a>
-          <li class="nav-item ">
-            <a class="nav-link" href="./notifications.php">
-              <i class="material-icons">notifications</i>
-              <p>Notifications</p>
+              <p>Manage Accounts</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="viewbooking.php">
+              <i class="material-icons">unarchive</i>
+              <p>View Booking Details</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="vehicle.php">
+              <i class="material-icons">local_taxi</i>
+              <p>Vehicles</p>
+            </a>
+          </li>
+          <li class="nav-item active-pro ">
+                            <a class="nav-link" href="php/function.php?logout='1'">
+                                <i class="material-icons">save_alt</i>
+                                <p>LOGOUT</p>
+                            </a>
+                        </li>
         </ul>
       </div>
     </div>
@@ -113,18 +128,73 @@ if (isset($_SESSION['user'])) {
       <!-- End Navbar -->
       <div class="content">
       
-      <div id="curve_chart" style="width: 900px; height: 500px"></div>
- 
+      <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-stats">
+                                <div class="card-header card-header-warning card-header-icon">
+                                    <div class="card-icon">
+                                        <i class="material-icons">local_taxi</i>
+                                    </div>
+                                    <p class="card-category">No of vehicles</p>
+                                    <h3 class="card-title">
+                                    <?php 
+                                    $noOfVehicles = mysqli_num_rows(mysqli_query($db,"SELECT * FROM vehicle"));
+                                    echo $noOfVehicles;
+                                    ?>   
+                                    </h3>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-stats">
+                                <div class="card-header card-header-success card-header-icon">
+                                    <div class="card-icon">
+                                        <i class="material-icons">notifications_active</i>
+                                    </div>
+                                    <p class="card-category">New Bookings</p>
+                                    <h3 class="card-title">
+                                    <?php 
+                                    $noOfNewBookings = mysqli_num_rows(mysqli_query($db,"SELECT * FROM booking WHERE status = 'pending'"));
+                                    echo $noOfNewBookings;
+                                    ?>    </h3>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-stats">
+                                <div class="card-header card-header-primary card-header-icon">
+                                    <div class="card-icon">
+                                        <i class="material-icons">person</i>
+                                    </div>
+                                    <p class="card-category">Total Users</p>
+                                    <h3 class="card-title">
+                                        <?php
+                                        echo mysqli_num_rows(mysqli_query($db,"SELECT * FROM login"));
+                                        ?>
 
-
-
-        <div class="container-fluid">
-          <div class="row">
-
-          </div>
-         
-         </div>
-      </div>
+                                    </h3>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
     </div>
          
   

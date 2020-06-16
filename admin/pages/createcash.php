@@ -15,7 +15,7 @@ if (isset($_SESSION['user'])) {
   header('location: ../../user/login.php');
 }
 
-include('php/createUser.php'); ?>
+ ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,6 +38,44 @@ include('php/createUser.php'); ?>
 </head>
 
 <body class="">
+<?php
+  if(isset($_SESSION['error'])){
+      if($_SESSION['error'] == "code1"){?>
+      <script>window.alert("Passwords not matched");</script>
+    <?php
+      unset($_SESSION['error']);
+    }
+      if($_SESSION['error'] == "2"){?>
+      
+        <script>window.alert("Password should be equal or greater than 6 characters");</script>
+     <?php 
+      unset($_SESSION['error']); 
+    }
+    if($_SESSION['error'] == "code3"){?>
+    <script>window.alert("Invalid phone number");</script>
+     <?php 
+      unset($_SESSION['error']); 
+    }
+  
+  if($_SESSION['error'] == "code4"){?>
+    <script>window.alert("Phone number already exists");</script>
+     <?php 
+      unset($_SESSION['error']); 
+    }
+    if($_SESSION['error'] == "code5"){?>
+        <script>window.alert("Nic already exists");</script>
+         <?php 
+          unset($_SESSION['error']); 
+        }?>
+   <?php
+  if(isset($_SESSION['success'])){
+    ?>
+    <script>window.alert("Record added");</script>
+    <?php
+    unset($_SESSION['success']);
+  }}
+  
+  ?>
     <div class="wrapper ">
         <div class="sidebar" data-color="purple" data-background-color="white" data-image="../assets/img/sidebar-1.jpg">
 
@@ -58,6 +96,24 @@ include('php/createUser.php'); ?>
                             <p>Create Account</p>
                         </a>
                     </li>
+                    <li class="nav-item ">
+            <a class="nav-link" href="viewbooking.php">
+              <i class="material-icons">unarchive</i>
+              <p>View Booking Details</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="vehicle.php">
+              <i class="material-icons">local_taxi</i>
+              <p>Vehicles</p>
+            </a>
+          </li>
+                    <li class="nav-item active-pro ">
+                            <a class="nav-link" href="php/function.php?logout='1'">
+                                <i class="material-icons">save_alt</i>
+                                <p>LOGOUT</p>
+                            </a>
+                        </li>
                 </ul>
             </div>
         </div>
@@ -69,18 +125,8 @@ include('php/createUser.php'); ?>
 
             <div class="container-fluid">
 
-                <form action="createcash.php" method="post">
-                    <?php if (count($errors) > 0) : ?>
-
-                        <?php if (isset($url)) {
-                            echo $_SESSION['url'];
-                        } ?>
-                        <div class="error">
-                            <?php foreach ($errors as $error) : ?>
-                                <p><?php echo $error ?></p>
-                            <?php endforeach ?>
-                        </div>
-                    <?php endif ?>
+                <form action="php/createcashier.php" method="post">
+                    
                     <div class="form-group">
                         <p><b>Name</b></p>
                         <input type="text" class="form-control" placeholder="Enter name" name="name">
@@ -119,7 +165,7 @@ include('php/createUser.php'); ?>
           </div>
 
 
-                    <button type="submit" class="btn btn-primary" name="createCashier">Create</button>
+                    <input type="submit" class="btn btn-primary" name="createCashier"></input>
                 </form>
             </div>
 

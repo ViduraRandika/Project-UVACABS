@@ -64,8 +64,14 @@ if (isset($_SESSION['user'])) {
                             <p>View Booking Details</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./vehicle.php">
+                            <i class="material-icons">local_taxi</i>
+                            <p>Vehicles</p>
+                        </a>
+                    </li>
                     <li class="nav-item active-pro ">
-                            <a class="nav-link" href="Cashier.php?logout='1'">
+                            <a class="nav-link" href="php/function.php?logout='1'">
                                 <i class="material-icons">save_alt</i>
                                 <p>LOGOUT</p>
                             </a>
@@ -85,17 +91,7 @@ if (isset($_SESSION['user'])) {
       <div class="container-fluid">
  
       <form action="createdriv.php" method="POST">
-          <?php if (count($errors) > 0) : ?>
-
-            <?php if (isset($url)) {
-              echo $_SESSION['url'];
-            } ?>
-            <div class="error">
-              <?php foreach ($errors as $error) : ?>
-                <p><?php echo $error ?></p>
-              <?php endforeach ?>
-            </div>
-          <?php endif ?>
+         
           <div class="form-group">
             <p><b>First Name</b></p>
             <input type="text" class="form-control" placeholder="Enter first name" name="fname">

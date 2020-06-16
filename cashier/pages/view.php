@@ -76,6 +76,13 @@ include('../../php/dbconfig.php');
             </a>
           </li>
 
+          <li class="nav-item">
+                        <a class="nav-link" href="./vehicle.php">
+                            <i class="material-icons">local_taxi</i>
+                            <p>Vehicles</p>
+                        </a>
+                    </li>
+
           <li class="nav-item active-pro ">
                             <a class="nav-link" href="php/function.php?logout='1'">
                                 <i class="material-icons">save_alt</i>

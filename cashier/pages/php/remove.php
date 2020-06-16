@@ -1,5 +1,6 @@
 <?php include('dbconfig.php');
 session_start();
+
 $id = $_POST['rc'];
 $sql = "SELECT * FROM login WHERE nic='$id'";
 $result = mysqli_query($db,$sql);
@@ -16,10 +17,6 @@ else{
     echo 0;
     exit;	
 }
-if(isset($_POST['rembooking'])){
-    $rbid = $_POST['rembooking'];
-    $sql2 = mysqli_query($db,"UPDATE booking set status = 'cancelled' where bookingId = '$rbid' ");
-    echo 1;
-}
+
 
 ?>

@@ -240,10 +240,11 @@ $url = 'https://api.sendgrid.com/';
                                                                                                                             <table border='0' cellpadding='0' cellspacing='0' class='wrapper-mobile' style='text-align:center;'>
                                                                                                                                 <tbody>
                                                                                                                                     <tr>
-                                                                                                                                    <td align='center' bgcolor='#ffbe00;' class='inner-td' style='border-radius:6px; font-size:16px; text-align:center; background-color:inherit;'>
-                                                                                                                                        <a   style='background-color:#ffbe00; border:1px solid #ffbe00; border-color:#ffbe00; border-radius:0px; border-width:1px; color:#000000; display:inline-block; font-size:14px; font-weight:normal; letter-spacing:0px; line-height:normal; padding:12px 40px 12px 40px; text-align:center; text-decoration:none; border-style:solid; font-family:inherit;' target='_blank'   href =http://www.uvacabs.company/user/accountverification.php?id=".$user_type.">ACTIVATE NOW</a>
-                                                                                                                                    </td>
+                                                                                                                                    <td align='center'>
+                                                                                                                                    <br>
                                                                                                                                     
+                                                                                                                                    <p>http://www.uvacabs.company/user/accountverification.php?id=".$user_type."</p>
+                                                                                                                                    </td>
                                                                                                                                     </tr>
                                                                                                                                     <tr>
                                                                                                                                     <td align='center' bgcolor='#ffbe00;' class='inner-td' style='border-radius:6px; font-size:16px; text-align:center; background-color:inherit;'>

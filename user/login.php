@@ -122,6 +122,7 @@ if(isset($_SESSION['user'])){
     if(isset($_SESSION['ver_code'])){
         if($_SESSION['ver_code']=="activated"){
             echo "<script type='text/javascript'>alert('Your account is now activated. You can now login with your credentials.');</script>";
+            unset($_SESSION['ver_code']);
         }
     }
     ?>

@@ -22,7 +22,15 @@ if (!isset($_SESSION['loginError'])||!isset($_COOKIE['activated'])) {
 
 <body style="background-color: white; ">
 
-    <?php include('../common/navigation.php'); ?>
+    <?php 
+    $index = "../index.php";
+    $booking = "../user/booking.php";
+    $contactus = "../user/contactus.php";
+    $user_profile = "../user/profile.php";
+    $login = "../user/login.php";
+	$signup = "../user/signup.php";
+	$logo = "../img/logo.png";
+    include('../common/navigation.php'); ?>
     <br><br><br><br><br><br><br><br>
     
     <?php
