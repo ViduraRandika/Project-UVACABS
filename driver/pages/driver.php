@@ -120,7 +120,7 @@ $sql1 = "SELECT * FROM booking INNER JOIN onlinepayment ON booking.bookingId = o
                           <td><a href="viewbooking.php?bookingId=<?php echo $row['bookingId'];?>"><?php echo $row['destination'];?></a></td>
                           <td><a href="viewbooking.php?bookingId=<?php echo $row['bookingId'];?>"><?php echo $row['tourDate'];?></a></td>
                           <td><a href="viewbooking.php?bookingId=<?php echo $row['bookingId'];?>"><?php echo $row['bookingId'];?></a></td>
-                          <td><a><button  <?php if($row['paymentType']=="advanced"){echo "disabled class='btn btn-secondary'";}else{echo 'class="btn btn-primary"';};?>>COMPLETE</button></td>
+                          <td><a><button onclick="window.location.href='php/complete.php?bookingId=<?php echo $row['bookingId']?>'" <?php if($row['paymentType']=="advanced"){echo "disabled class='btn btn-secondary'";}else{echo 'class="btn btn-primary"';};?>>COMPLETE</button></td>
                           
                           <tr>
                         <?php endwhile ?>
